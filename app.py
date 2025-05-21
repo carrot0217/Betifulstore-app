@@ -1,5 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, session
 from werkzeug.utils import secure_filename
+from collections import Counter
+from datetime import datetime, timedelta
 import os
 
 app = Flask(__name__)
@@ -11,7 +13,6 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 inventory = []
 orders = []
 
-# 사용자 계정 (ID:PW)
 users = {
     "gangnam": "1234",
     "seochogu": "abcd1234",
@@ -33,8 +34,7 @@ def index():
     elif sort_by == 'stock':
         filtered_inventory.sort(key=lambda x: x['stock'], reverse=True)
 
-    return render_template('index.html', inventory=filtered_inventory,
-                           keyword=keyword, sort_by=sort_by)
+    return render_template('index.html', inventory=filtered_inventory, keyword=keyword, sort_by=sort_by)
 
 @app.route('/login_user', methods=['GET', 'POST'])
 def login_user():
@@ -123,7 +123,7 @@ def order():
 
     item_index = int(request.form['item_index'])
     quantity = int(request.form['quantity'])
-    store = session['user_id']  # 로그인된 사용자 ID가 곧 매장명
+    store = session['user_id']
     wish_date = request.form['wish_date']
 
     item = inventory[item_index]
@@ -133,10 +133,11 @@ def order():
             'store': store,
             'item': item['name'],
             'quantity': quantity,
-            'wish_date': wish_date
+            'wish_date': wish_date,
+            'date': datetime.now().date()
         })
     else:
-        return "재고 수량보다 많은 수량을 주문할 수 없습니다."
+        return f"현 재고는 {item['stock']}개 입니다."
     return redirect(url_for('index'))
 
 @app.route('/orders')
@@ -145,6 +146,19 @@ def view_orders():
         return redirect(url_for('login_user'))
     user_orders = [o for o in orders if o['store'] == session['user_id']]
     return render_template('orders.html', orders=user_orders)
+
+@app.route('/admin/orders', methods=['GET', 'POST'])
+def admin_orders():
+    if 'logged_in' not in session:
+        return redirect(url_for('login'))
+
+    selected_store = request.form.get('store')
+    filtered_orders = orders
+    if selected_store:
+        filtered_orders = [o for o in orders if o['store'] == selected_store]
+    store_names = sorted(set(o['store'] for o in orders))
+
+    return render_template('admin_orders.html', orders=filtered_orders, store_names=store_names, selected_store=selected_store)
 
 @app.route('/admin/users', methods=['GET', 'POST'])
 def manage_users():
@@ -172,24 +186,38 @@ def manage_users():
 
     return render_template('manage_users.html', users=users, message=message)
 
-
-@app.route('/admin/orders', methods=['GET', 'POST'])
-def admin_orders():
+@app.route('/admin/dashboard')
+def dashboard():
     if 'logged_in' not in session:
         return redirect(url_for('login'))
 
-    selected_store = request.form.get('store')
-    filtered_orders = orders
-    if selected_store:
-        filtered_orders = [o for o in orders if o['store'] == selected_store]
-    store_names = sorted(set(o['store'] for o in orders))
+    total_orders = len(orders)
+    total_quantity = sum(o['quantity'] for o in orders)
 
-    return render_template('admin_orders.html',
-                           orders=filtered_orders,
-                           store_names=store_names,
-                           selected_store=selected_store)
+    store_counter = Counter(o['store'] for o in orders)
+    item_counter = Counter(o['item'] for o in orders)
+
+    recent_days = [datetime.now().date() - timedelta(days=i) for i in range(6, -1, -1)]
+    daily_counter = Counter(o['date'] for o in orders if 'date' in o)
+    date_labels = [d.strftime('%Y-%m-%d') for d in recent_days]
+    daily_counts = [daily_counter.get(d, 0) for d in recent_days]
+
+    top_items = item_counter.most_common(5)
+    top_item_labels = [i[0] for i in top_items]
+    top_item_counts = [i[1] for i in top_items]
+
+    return render_template('admin_dashboard.html',
+                           total_orders=total_orders,
+                           total_quantity=total_quantity,
+                           store_labels=list(store_counter.keys()),
+                           store_counts=list(store_counter.values()),
+                           item_labels=list(item_counter.keys()),
+                           item_counts=list(item_counter.values()),
+                           date_labels=date_labels,
+                           daily_counts=daily_counts,
+                           top_item_labels=top_item_labels,
+                           top_item_counts=top_item_counts)
 
 if __name__ == '__main__':
     os.makedirs(UPLOAD_FOLDER, exist_ok=True)
     app.run(host='0.0.0.0', port=10000)
-
