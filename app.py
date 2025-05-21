@@ -193,35 +193,44 @@ def admin_dashboard():
     if 'logged_in' not in session:
         return redirect(url_for('login'))
 
-    total_orders = len(orders)
-    total_quantity = sum(order['quantity'] for order in orders)
+    # 날짜 필터 가져오기
+    start_date = request.args.get('start')
+    end_date = request.args.get('end')
 
-    # 매장별 주문 건수
+    # 날짜 기본값 설정 (없으면 전체 주문)
+    filtered_orders = orders
+    if start_date and end_date:
+        try:
+            start_dt = datetime.strptime(start_date, "%Y-%m-%d")
+            end_dt = datetime.strptime(end_date, "%Y-%m-%d")
+            filtered_orders = [
+                o for o in orders
+                if 'wish_date' in o and start_dt <= datetime.strptime(o['wish_date'], "%Y-%m-%d") <= end_dt
+            ]
+        except:
+            pass  # 날짜 파싱 에러 시 전체 출력
+
+    total_orders = len(filtered_orders)
+    total_quantity = sum(order['quantity'] for order in filtered_orders)
+
     store_counts = {}
     item_counts = {}
     daily_counts = {}
 
-    for order in orders:
+    for order in filtered_orders:
         store = order['store']
         item = order['item']
         qty = order['quantity']
-        date = order.get('wish_date', '')  # 날짜는 wish_date 기준
+        date = order.get('wish_date', '')
 
-        # 매장별 주문 수
         store_counts[store] = store_counts.get(store, 0) + 1
-
-        # 상품별 누적 수량
         item_counts[item] = item_counts.get(item, 0) + qty
-
-        # 일자별 주문 수
         if date:
             daily_counts[date] = daily_counts.get(date, 0) + 1
 
-    # 최근 7일 날짜 리스트
     recent_7_days = [(datetime.now() - timedelta(days=i)).strftime('%Y-%m-%d') for i in range(6, -1, -1)]
     daily_data = [daily_counts.get(day, 0) for day in recent_7_days]
 
-    # TOP 5 상품
     top_items = sorted(item_counts.items(), key=lambda x: x[1], reverse=True)[:5]
 
     return render_template('admin_dashboard.html',
@@ -231,7 +240,10 @@ def admin_dashboard():
                            item_counts=item_counts,
                            recent_7_days=recent_7_days,
                            daily_data=daily_data,
-                           top_items=top_items)
+                           top_items=top_items,
+                           start_date=start_date or '',
+                           end_date=end_date or '')
+
 
 
 if __name__ == '__main__':
