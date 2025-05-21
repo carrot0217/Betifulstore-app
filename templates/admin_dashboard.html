@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<form method="get" style="margin-bottom: 20px;">
-  시작일: <input type="date" name="start" value="{{ start_date }}">
-  종료일: <input type="date" name="end" value="{{ end_date }}">
+<form method="get" id="filterForm" style="margin-bottom: 20px;">
+  시작일: <input type="date" name="start" value="{{ start_date }}" onchange="document.getElementById('filterForm').submit()">
+  종료일: <input type="date" name="end" value="{{ end_date }}" onchange="document.getElementById('filterForm').submit()">
 
   매장 선택:
-  <select name="store">
+  <select name="store" onchange="document.getElementById('filterForm').submit()">
     <option value="">전체 보기</option>
     {% for store in store_list %}
       <option value="{{ store }}" {% if store == selected_store %}selected{% endif %}>{{ store }}</option>
@@ -12,14 +12,12 @@
   </select>
 
   품목 선택:
-  <select name="item">
+  <select name="item" onchange="document.getElementById('filterForm').submit()">
     <option value="">전체 보기</option>
     {% for item in item_list %}
       <option value="{{ item }}" {% if item == selected_item %}selected{% endif %}>{{ item }}</option>
     {% endfor %}
   </select>
-
-  <button type="submit">조회</button>
 </form>
 
 <html>
