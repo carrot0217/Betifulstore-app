@@ -193,23 +193,32 @@ def admin_dashboard():
     if 'logged_in' not in session:
         return redirect(url_for('login'))
 
-    # 날짜 필터 가져오기
+    # 필터 값 받기
     start_date = request.args.get('start')
     end_date = request.args.get('end')
+    selected_store = request.args.get('store')
+    selected_item = request.args.get('item')
 
-    # 날짜 기본값 설정 (없으면 전체 주문)
+    # 주문 필터링
     filtered_orders = orders
     if start_date and end_date:
         try:
             start_dt = datetime.strptime(start_date, "%Y-%m-%d")
             end_dt = datetime.strptime(end_date, "%Y-%m-%d")
             filtered_orders = [
-                o for o in orders
+                o for o in filtered_orders
                 if 'wish_date' in o and start_dt <= datetime.strptime(o['wish_date'], "%Y-%m-%d") <= end_dt
             ]
         except:
-            pass  # 날짜 파싱 에러 시 전체 출력
+            pass
 
+    if selected_store:
+        filtered_orders = [o for o in filtered_orders if o['store'] == selected_store]
+
+    if selected_item:
+        filtered_orders = [o for o in filtered_orders if o['item'] == selected_item]
+
+    # 통계 계산
     total_orders = len(filtered_orders)
     total_quantity = sum(order['quantity'] for order in filtered_orders)
 
@@ -230,8 +239,11 @@ def admin_dashboard():
 
     recent_7_days = [(datetime.now() - timedelta(days=i)).strftime('%Y-%m-%d') for i in range(6, -1, -1)]
     daily_data = [daily_counts.get(day, 0) for day in recent_7_days]
-
     top_items = sorted(item_counts.items(), key=lambda x: x[1], reverse=True)[:5]
+
+    # 전체 매장/상품 목록 (자동 생성)
+    store_list = sorted(set(o['store'] for o in orders))
+    item_list = sorted(set(o['item'] for o in orders))
 
     return render_template('admin_dashboard.html',
                            total_orders=total_orders,
@@ -242,8 +254,11 @@ def admin_dashboard():
                            daily_data=daily_data,
                            top_items=top_items,
                            start_date=start_date or '',
-                           end_date=end_date or '')
-
+                           end_date=end_date or '',
+                           selected_store=selected_store or '',
+                           selected_item=selected_item or '',
+                           store_list=store_list,
+                           item_list=item_list)
 
 
 if __name__ == '__main__':
