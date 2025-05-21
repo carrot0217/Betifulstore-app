@@ -186,6 +186,8 @@ def manage_users():
 
     return render_template('manage_users.html', users=users, message=message)
 
+from datetime import datetime, timedelta
+
 @app.route('/admin/dashboard')
 def admin_dashboard():
     if 'logged_in' not in session:
@@ -194,28 +196,32 @@ def admin_dashboard():
     total_orders = len(orders)
     total_quantity = sum(order['quantity'] for order in orders)
 
+    # 매장별 주문 건수
     store_counts = {}
     item_counts = {}
     daily_counts = {}
 
-    from datetime import datetime, timedelta
-
     for order in orders:
-        # 매장별 주문 수
-        store_counts[order['store']] = store_counts.get(order['store'], 0) + 1
+        store = order['store']
+        item = order['item']
+        qty = order['quantity']
+        date = order.get('wish_date', '')  # 날짜는 wish_date 기준
 
-        # 상품별 수량
-        item_counts[order['item']] = item_counts.get(order['item'], 0) + order['quantity']
+        # 매장별 주문 수
+        store_counts[store] = store_counts.get(store, 0) + 1
+
+        # 상품별 누적 수량
+        item_counts[item] = item_counts.get(item, 0) + qty
 
         # 일자별 주문 수
-        date_str = order.get('date', '') or datetime.now().strftime('%Y-%m-%d')
-        daily_counts[date_str] = daily_counts.get(date_str, 0) + 1
+        if date:
+            daily_counts[date] = daily_counts.get(date, 0) + 1
 
-    # 최근 7일 날짜 순 정렬
+    # 최근 7일 날짜 리스트
     recent_7_days = [(datetime.now() - timedelta(days=i)).strftime('%Y-%m-%d') for i in range(6, -1, -1)]
     daily_data = [daily_counts.get(day, 0) for day in recent_7_days]
 
-    # 상품 TOP 5
+    # TOP 5 상품
     top_items = sorted(item_counts.items(), key=lambda x: x[1], reverse=True)[:5]
 
     return render_template('admin_dashboard.html',
@@ -226,6 +232,7 @@ def admin_dashboard():
                            recent_7_days=recent_7_days,
                            daily_data=daily_data,
                            top_items=top_items)
+
 
 if __name__ == '__main__':
     os.makedirs(UPLOAD_FOLDER, exist_ok=True)
