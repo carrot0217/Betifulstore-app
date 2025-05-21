@@ -2,8 +2,26 @@
 <form method="get" style="margin-bottom: 20px;">
   시작일: <input type="date" name="start" value="{{ start_date }}">
   종료일: <input type="date" name="end" value="{{ end_date }}">
+
+  매장 선택:
+  <select name="store">
+    <option value="">전체 보기</option>
+    {% for store in store_list %}
+      <option value="{{ store }}" {% if store == selected_store %}selected{% endif %}>{{ store }}</option>
+    {% endfor %}
+  </select>
+
+  품목 선택:
+  <select name="item">
+    <option value="">전체 보기</option>
+    {% for item in item_list %}
+      <option value="{{ item }}" {% if item == selected_item %}selected{% endif %}>{{ item }}</option>
+    {% endfor %}
+  </select>
+
   <button type="submit">조회</button>
 </form>
+
 <html>
 <head>
   <title>관리자 통계 대시보드</title>
