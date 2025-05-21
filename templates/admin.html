@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head><title>관리자 상품 등록</title></head>
+<body>
+  <h1>상품 등록 (관리자)</h1>
+  <form method="post" enctype="multipart/form-data">
+    이름: <input type="text" name="name" required><br>
+    설명: <input type="text" name="description" required><br>
+    재고 수량: <input type="number" name="stock" required><br>
+    이미지 업로드: <input type="file" name="image" required><br>
+    <button type="submit">등록</button>
+  </form>
+
+  <h2>등록된 상품 목록</h2>
+  {% for item in inventory %}
+    <div style="border:1px solid #ccc; padding:10px; margin:10px;">
+      <img src="{{ item.image }}" width="100"><br>
+      <strong>{{ item.name }}</strong><br>
+      {{ item.description }}<br>
+      재고: {{ item.stock }}개
+      <form method="post" action="/delete/{{ loop.index0 }}">
+        <button type="submit">삭제</button>
+      </form>
+<form method="get" action="/edit/{{ loop.index0 }}">
+  <button type="submit">수정</button>
+</form>
+
+    </div>
+  {% endfor %}
+
+  <a href="/logout">← 로그아웃</a> | <a href="/">사용자 화면</a>
+</body>
+</html>

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head><title>전체 주문 이력 (관리자)</title></head>
+<body>
+  <h1>전체 주문 이력</h1>
+
+  <!-- 🔍 매장 선택 드롭다운 필터 -->
+  <form method="post">
+    <label>매장 선택:</label>
+    <select name="store">
+      <option value="">-- 전체 보기 --</option>
+      {% for store in store_names %}
+        <option value="{{ store }}" {% if store == selected_store %}selected{% endif %}>
+          {{ store }}
+        </option>
+      {% endfor %}
+    </select>
+    <button type="submit">조회</button>
+  </form>
+
+  <br>
+
+  <table border="1" cellpadding="8">
+    <tr>
+      <th>매장명</th>
+      <th>상품명</th>
+      <th>수량</th>
+      <th>입고 희망일</th>
+    </tr>
+    {% for order in orders %}
+      <tr>
+        <td>{{ order.store }}</td>
+        <td>{{ order.item }}</td>
+        <td>{{ order.quantity }}</td>
+        <td>{{ order.wish_date }}</td>
+      </tr>
+    {% endfor %}
+  </table>
+
+  <br>
+  <a href="/admin">← 관리자 페이지</a>
+</body>
+</html>

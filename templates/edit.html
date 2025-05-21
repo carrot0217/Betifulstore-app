@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head><title>상품 수정</title></head>
+<body>
+  <h1>상품 수정</h1>
+  <form method="post">
+    이름: <input type="text" name="name" value="{{ item.name }}" required><br>
+    설명: <input type="text" name="description" value="{{ item.description }}" required><br>
+    재고 수량: <input type="number" name="stock" value="{{ item.stock }}" required><br>
+    <button type="submit">수정 완료</button>
+  </form>
+  <a href="/admin">← 돌아가기</a>
+</body>
+</html>

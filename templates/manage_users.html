@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>사용자 계정 관리</title>
+  <script>
+    function confirmDelete() {
+      return confirm("정말 삭제하시겠습니까?");
+    }
+  </script>
+</head>
+<body>
+  <h1>사용자 계정 관리</h1>
+
+  {% if message %}
+    <p style="color: green;">{{ message }}</p>
+  {% endif %}
+
+  <h3>✅ 사용자 추가</h3>
+  <form method="post">
+    <input type="hidden" name="action" value="add">
+    ID: <input type="text" name="user_id" required>
+    비밀번호: <input type="password" name="password" required>
+    <button type="submit">추가</button>
+  </form>
+
+  <h3>🗑 사용자 삭제</h3>
+  <form method="post" onsubmit="return confirmDelete();">
+    <input type="hidden" name="action" value="delete">
+    ID: <input type="text" name="user_id" required>
+    <button type="submit">삭제</button>
+  </form>
+
+  <h3>📋 현재 등록된 사용자 목록</h3>
+  <ul>
+    {% for uid in users.keys() %}
+      <li>{{ uid }}</li>
+    {% endfor %}
+  </ul>
+
+  <a href="/admin">← 관리자 페이지</a>
+</body>
+</html>

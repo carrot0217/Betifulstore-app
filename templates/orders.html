@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<head><title>주문 이력</title></head>
+<body>
+  <h1>나의 주문 이력</h1>
+  <ul>
+    {% for order in orders %}
+      <li>{{ order.store }} - {{ order.item }} ({{ order.quantity }}개) - 입고일: {{ order.wish_date }}</li>
+    {% endfor %}
+  </ul>
+  <a href="/">← 상품 목록으로 돌아가기</a>
+</body>
+</html>
