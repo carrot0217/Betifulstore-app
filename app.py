@@ -187,36 +187,45 @@ def manage_users():
     return render_template('manage_users.html', users=users, message=message)
 
 @app.route('/admin/dashboard')
-def dashboard():
+def admin_dashboard():
     if 'logged_in' not in session:
         return redirect(url_for('login'))
 
     total_orders = len(orders)
-    total_quantity = sum(o['quantity'] for o in orders)
+    total_quantity = sum(order['quantity'] for order in orders)
 
-    store_counter = Counter(o['store'] for o in orders)
-    item_counter = Counter(o['item'] for o in orders)
+    store_counts = {}
+    item_counts = {}
+    daily_counts = {}
 
-    recent_days = [datetime.now().date() - timedelta(days=i) for i in range(6, -1, -1)]
-    daily_counter = Counter(o['date'] for o in orders if 'date' in o)
-    date_labels = [d.strftime('%Y-%m-%d') for d in recent_days]
-    daily_counts = [daily_counter.get(d, 0) for d in recent_days]
+    from datetime import datetime, timedelta
 
-    top_items = item_counter.most_common(5)
-    top_item_labels = [i[0] for i in top_items]
-    top_item_counts = [i[1] for i in top_items]
+    for order in orders:
+        # 매장별 주문 수
+        store_counts[order['store']] = store_counts.get(order['store'], 0) + 1
+
+        # 상품별 수량
+        item_counts[order['item']] = item_counts.get(order['item'], 0) + order['quantity']
+
+        # 일자별 주문 수
+        date_str = order.get('date', '') or datetime.now().strftime('%Y-%m-%d')
+        daily_counts[date_str] = daily_counts.get(date_str, 0) + 1
+
+    # 최근 7일 날짜 순 정렬
+    recent_7_days = [(datetime.now() - timedelta(days=i)).strftime('%Y-%m-%d') for i in range(6, -1, -1)]
+    daily_data = [daily_counts.get(day, 0) for day in recent_7_days]
+
+    # 상품 TOP 5
+    top_items = sorted(item_counts.items(), key=lambda x: x[1], reverse=True)[:5]
 
     return render_template('admin_dashboard.html',
                            total_orders=total_orders,
                            total_quantity=total_quantity,
-                           store_labels=list(store_counter.keys()),
-                           store_counts=list(store_counter.values()),
-                           item_labels=list(item_counter.keys()),
-                           item_counts=list(item_counter.values()),
-                           date_labels=date_labels,
-                           daily_counts=daily_counts,
-                           top_item_labels=top_item_labels,
-                           top_item_counts=top_item_counts)
+                           store_counts=store_counts,
+                           item_counts=item_counts,
+                           recent_7_days=recent_7_days,
+                           daily_data=daily_data,
+                           top_items=top_items)
 
 if __name__ == '__main__':
     os.makedirs(UPLOAD_FOLDER, exist_ok=True)
