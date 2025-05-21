@@ -1,118 +1,107 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>관리자 대시보드</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>관리자 통계 대시보드</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     body {
-      background-color: #f8f2e9;
-      font-family: 'Segoe UI', sans-serif;
-      padding: 20px;
-      margin: 0;
+      font-family: "Segoe UI", sans-serif;
+      background-color: #f9f5f0;
+      padding: 30px;
       color: #333;
     }
     h1 {
-      text-align: center;
-      color: #4d3b2f;
+      color: #444;
     }
-    .stats {
-      background-color: #ffffff;
-      border: 1px solid #ddd;
-      border-radius: 10px;
+    .stat-box {
+      background: #fff3e6;
       padding: 15px;
       margin-bottom: 20px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-      max-width: 600px;
-      margin-left: auto;
-      margin-right: auto;
+      border-radius: 8px;
+      box-shadow: 0 0 5px rgba(0,0,0,0.05);
     }
     canvas {
-      max-width: 100%;
-      margin: 20px auto;
-      display: block;
+      margin-top: 20px;
+      background: #fff;
+      padding: 10px;
+      border-radius: 8px;
     }
     a {
-      display: block;
-      text-align: center;
+      display: inline-block;
       margin-top: 30px;
-      color: #666;
-      text-decoration: none;
-    }
-    a:hover {
-      color: #222;
+      color: #336699;
     }
   </style>
 </head>
 <body>
-  <h1>관리자 대시보드</h1>
+  <h1>📊 관리자 통계 대시보드</h1>
 
-  <div class="stats">
+  <div class="stat-box">
     <p><strong>총 주문 건수:</strong> {{ total_orders }}건</p>
     <p><strong>총 주문 수량:</strong> {{ total_quantity }}개</p>
   </div>
 
-  <div class="stats">
-    <h3>최근 7일 주문 추이</h3>
-    <canvas id="dailyChart"></canvas>
-  </div>
+  <h3>🏬 매장별 주문 건수</h3>
+  <canvas id="storeChart"></canvas>
 
-  <div class="stats">
-    <h3>상품별 TOP 5 주문량</h3>
-    <canvas id="itemChart"></canvas>
-  </div>
+  <h3>📦 상품별 누적 주문 수량</h3>
+  <canvas id="itemChart"></canvas>
 
-  <div class="stats">
-    <h3>매장별 주문 랭킹</h3>
-    <canvas id="storeChart"></canvas>
-  </div>
+  <h3>📅 최근 7일 주문 추이</h3>
+  <canvas id="dailyChart"></canvas>
+
+  <h3>🏆 주문량 TOP 5 상품</h3>
+  <canvas id="topChart"></canvas>
 
   <a href="/admin">← 관리자 페이지로 돌아가기</a>
 
   <script>
-    const dailyCtx = document.getElementById('dailyChart');
-    new Chart(dailyCtx, {
-      type: 'line',
-      data: {
-        labels: {{ daily_chart.labels|tojson }},
-        datasets: [{
-          label: '주문 건수',
-          data: {{ daily_chart.data|tojson }},
-          backgroundColor: '#ffdead',
-          borderColor: '#ff8c69',
-          borderWidth: 2,
-          fill: true,
-          tension: 0.3
-        }]
-      }
-    });
-
-    const itemCtx = document.getElementById('itemChart');
-    new Chart(itemCtx, {
+    const storeChart = new Chart(document.getElementById('storeChart'), {
       type: 'bar',
       data: {
-        labels: {{ item_chart.labels|tojson }},
-        datasets: [{
-          label: '상품 주문 수량',
-          data: {{ item_chart.data|tojson }},
-          backgroundColor: '#fbbd9b',
-          borderColor: '#f08080',
-          borderWidth: 1
-        }]
-      }
-    });
-
-    const storeCtx = document.getElementById('storeChart');
-    new Chart(storeCtx, {
-      type: 'bar',
-      data: {
-        labels: {{ store_chart.labels|tojson }},
+        labels: {{ store_counts.keys() | list | tojson }},
         datasets: [{
           label: '매장별 주문 건수',
-          data: {{ store_chart.data|tojson }},
-          backgroundColor: '#c2e0c6',
-          borderColor: '#90c695',
-          borderWidth: 1
+          data: {{ store_counts.values() | list | tojson }},
+          backgroundColor: '#ffd6a5'
+        }]
+      }
+    });
+
+    const itemChart = new Chart(document.getElementById('itemChart'), {
+      type: 'bar',
+      data: {
+        labels: {{ item_counts.keys() | list | tojson }},
+        datasets: [{
+          label: '상품별 주문 수량',
+          data: {{ item_counts.values() | list | tojson }},
+          backgroundColor: '#ffadad'
+        }]
+      }
+    });
+
+    const dailyChart = new Chart(document.getElementById('dailyChart'), {
+      type: 'line',
+      data: {
+        labels: {{ recent_7_days | tojson }},
+        datasets: [{
+          label: '일별 주문 건수',
+          data: {{ daily_data | tojson }},
+          backgroundColor: 'rgba(173,216,230,0.4)',
+          borderColor: '#74c0fc',
+          fill: true
+        }]
+      }
+    });
+
+    const topChart = new Chart(document.getElementById('topChart'), {
+      type: 'bar',
+      data: {
+        labels: {{ top_items | map(attribute=0) | list | tojson }},
+        datasets: [{
+          label: 'TOP 5 상품 주문 수량',
+          data: {{ top_items | map(attribute=1) | list | tojson }},
+          backgroundColor: '#b5ead7'
         }]
       }
     });
