@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>관리자 대시보드</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      background-color: #f8f2e9;
+      font-family: 'Segoe UI', sans-serif;
+      padding: 20px;
+      margin: 0;
+      color: #333;
+    }
+    h1 {
+      text-align: center;
+      color: #4d3b2f;
+    }
+    .stats {
+      background-color: #ffffff;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      padding: 15px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    canvas {
+      max-width: 100%;
+      margin: 20px auto;
+      display: block;
+    }
+    a {
+      display: block;
+      text-align: center;
+      margin-top: 30px;
+      color: #666;
+      text-decoration: none;
+    }
+    a:hover {
+      color: #222;
+    }
+  </style>
+</head>
+<body>
+  <h1>관리자 대시보드</h1>
+
+  <div class="stats">
+    <p><strong>총 주문 건수:</strong> {{ total_orders }}건</p>
+    <p><strong>총 주문 수량:</strong> {{ total_quantity }}개</p>
+  </div>
+
+  <div class="stats">
+    <h3>최근 7일 주문 추이</h3>
+    <canvas id="dailyChart"></canvas>
+  </div>
+
+  <div class="stats">
+    <h3>상품별 TOP 5 주문량</h3>
+    <canvas id="itemChart"></canvas>
+  </div>
+
+  <div class="stats">
+    <h3>매장별 주문 랭킹</h3>
+    <canvas id="storeChart"></canvas>
+  </div>
+
+  <a href="/admin">← 관리자 페이지로 돌아가기</a>
+
+  <script>
+    const dailyCtx = document.getElementById('dailyChart');
+    new Chart(dailyCtx, {
+      type: 'line',
+      data: {
+        labels: {{ daily_chart.labels|tojson }},
+        datasets: [{
+          label: '주문 건수',
+          data: {{ daily_chart.data|tojson }},
+          backgroundColor: '#ffdead',
+          borderColor: '#ff8c69',
+          borderWidth: 2,
+          fill: true,
+          tension: 0.3
+        }]
+      }
+    });
+
+    const itemCtx = document.getElementById('itemChart');
+    new Chart(itemCtx, {
+      type: 'bar',
+      data: {
+        labels: {{ item_chart.labels|tojson }},
+        datasets: [{
+          label: '상품 주문 수량',
+          data: {{ item_chart.data|tojson }},
+          backgroundColor: '#fbbd9b',
+          borderColor: '#f08080',
+          borderWidth: 1
+        }]
+      }
+    });
+
+    const storeCtx = document.getElementById('storeChart');
+    new Chart(storeCtx, {
+      type: 'bar',
+      data: {
+        labels: {{ store_chart.labels|tojson }},
+        datasets: [{
+          label: '매장별 주문 건수',
+          data: {{ store_chart.data|tojson }},
+          backgroundColor: '#c2e0c6',
+          borderColor: '#90c695',
+          borderWidth: 1
+        }]
+      }
+    });
+  </script>
+</body>
+</html>
