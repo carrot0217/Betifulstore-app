@@ -128,6 +128,13 @@ def manage_items():
         return redirect(url_for('login_user'))
     return render_template('manage_items.html')
 
+# ✅ 관리자 기능 - 통계 대시보드
+@app.route('/admin/dashboard')
+def admin_dashboard():
+    if 'user_id' not in session or session.get('role') != 'admin':
+        return redirect(url_for('login_user'))
+    return render_template('admin_dashboard.html')
+
 # 서버 실행
 if __name__ == '__main__':
     os.makedirs(UPLOAD_FOLDER, exist_ok=True)
