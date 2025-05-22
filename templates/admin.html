@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <title>🛒 관리자 상품 등록</title>
+  <title>📦 상품 등록 및 관리</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
     body {
@@ -15,105 +15,105 @@
     h1 {
       color: #5a4031;
     }
-    .form-box, .inventory-list {
+    form {
       background: #fff7ec;
-      padding: 20px;
+      padding: 15px;
       border-radius: 10px;
-      margin-bottom: 20px;
-      box-shadow: 0 0 5px rgba(0,0,0,0.05);
+      margin-bottom: 30px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
     }
-    input[type="text"], input[type="number"], textarea, input[type="file"] {
-      padding: 8px;
-      margin: 5px 0 10px 0;
+    input[type="text"], input[type="number"], input[type="file"] {
       width: 100%;
-      border: 1px solid #ccc;
+      padding: 8px;
+      margin: 8px 0;
       border-radius: 6px;
+      border: 1px solid #ccc;
     }
     button {
-      background-color: #ffcfa0;
+      padding: 10px 15px;
+      background-color: #ffdab9;
       border: none;
-      padding: 10px 20px;
       border-radius: 6px;
-      color: #5a4031;
       font-weight: bold;
       cursor: pointer;
-      transition: background-color 0.3s;
+      color: #4b3832;
     }
     button:hover {
-      background-color: #ffbb7d;
+      background-color: #ffccaa;
     }
     table {
       width: 100%;
       border-collapse: collapse;
-      margin-top: 15px;
+      background: #fffaf0;
     }
     th, td {
-      padding: 10px;
-      border: 1px solid #ddd;
+      padding: 12px;
+      border-bottom: 1px solid #ddd;
       text-align: center;
     }
     th {
-      background-color: #ffe0b2;
+      background-color: #ffe7c2;
+      color: #5a4031;
     }
     img {
-      max-width: 60px;
-      max-height: 60px;
+      max-width: 80px;
+      border-radius: 6px;
     }
-    .action-buttons form {
+    .actions form {
       display: inline;
+    }
+    a {
+      display: inline-block;
+      margin-top: 20px;
+      color: #6c5ce7;
+      text-decoration: none;
     }
   </style>
 </head>
 <body>
-  <h1>🛒 관리자 상품 등록</h1>
+  <h1>📦 상품 등록 및 관리</h1>
 
-  <div class="form-box">
-    <form method="post" enctype="multipart/form-data">
-      <label>상품명</label>
-      <input type="text" name="name" required>
-      
-      <label>설명</label>
-      <textarea name="description" rows="3" required></textarea>
-      
-      <label>재고 수량</label>
-      <input type="number" name="stock" min="0" required>
-      
-      <label>이미지 업로드</label>
-      <input type="file" name="image" accept="image/*" required>
-      
-      <button type="submit">등록</button>
-    </form>
-  </div>
+  <form method="POST" enctype="multipart/form-data">
+    <label>상품명:</label>
+    <input type="text" name="name" required>
+    <label>설명:</label>
+    <input type="text" name="description" required>
+    <label>재고 수량:</label>
+    <input type="number" name="stock" min="0" required>
+    <label>상품 이미지:</label>
+    <input type="file" name="image" accept="image/*" required>
+    <button type="submit">상품 등록</button>
+  </form>
 
-  <div class="inventory-list">
-    <h2>📦 등록된 상품 목록</h2>
-    <table>
-      <tr>
-        <th>이미지</th>
-        <th>상품명</th>
-        <th>설명</th>
-        <th>재고</th>
-        <th>수정/삭제</th>
-      </tr>
-      {% for i, item in enumerate(inventory) %}
-      <tr>
-        <td><img src="{{ item.image }}" alt="Image"></td>
-        <td>{{ item.name }}</td>
-        <td>{{ item.description }}</td>
-        <td>{{ item.stock }}</td>
-        <td class="action-buttons">
-          <form method="get" action="/edit/{{ i }}">
-            <button type="submit">수정</button>
-          </form>
-          <form method="post" action="/delete/{{ i }}" onsubmit="return confirm('정말 삭제하시겠습니까?');">
-            <button type="submit">삭제</button>
-          </form>
-        </td>
-      </tr>
-      {% endfor %}
-    </table>
-  </div>
+  <h2>📋 등록된 상품 목록</h2>
+  <table>
+    <tr>
+      <th>번호</th>
+      <th>이미지</th>
+      <th>상품명</th>
+      <th>설명</th>
+      <th>재고</th>
+      <th>관리</th>
+    </tr>
+    {% for item in inventory %}
+    <tr>
+      <td>{{ loop.index }}</td>
+      <td><img src="{{ item.image }}" alt="{{ item.name }}"></td>
+      <td>{{ item.name }}</td>
+      <td>{{ item.description }}</td>
+      <td>{{ item.stock }}</td>
+      <td class="actions">
+        <form method="GET" action="/edit/{{ loop.index0 }}">
+          <button type="submit">수정</button>
+        </form>
+        <form method="POST" action="/delete/{{ loop.index0 }}">
+          <button type="submit" onclick="return confirm('정말 삭제하시겠습니까?')">삭제</button>
+        </form>
+      </td>
+    </tr>
+    {% endfor %}
+  </table>
 
-  <a href="/admin/dashboard">← 관리자 대시보드로 돌아가기</a>
+  <a href="/admin/home">← 관리자 홈으로 돌아가기</a>
 </body>
 </html>
