@@ -14,10 +14,12 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 inventory = []
 orders = []
 
+# ✅ 사용자 및 관리자 계정 구성
 users = {
-    "gangnam": "1234",
-    "seochogu": "abcd1234",
-    "hongdae": "pppp5555"
+    "gangnam": {"password": "1234", "role": "user"},
+    "seochogu": {"password": "abcd1234", "role": "user"},
+    "hongdae": {"password": "pppp5555", "role": "user"},
+    "admin": {"password": "admin1234", "role": "admin"}  # 관리자 계정
 }
 
 @app.route('/')
@@ -43,14 +45,19 @@ def login_user():
     if request.method == 'POST':
         user_id = request.form['user_id']
         password = request.form['password']
-        if user_id in users and users[user_id] == password:
+        user = users.get(user_id)
+        if user and user['password'] == password:
             session['user_id'] = user_id
-            return redirect(url_for('user_home'))  # 사용자 홈으로 리디렉션
+            session['role'] = user['role']
+            if user['role'] == 'admin':
+                return redirect(url_for('admin_home'))
+            else:
+                return redirect(url_for('user_home'))
         else:
             return "로그인 실패: 잘못된 ID 또는 비밀번호입니다."
     return render_template('login_user.html')
 
-@app.route('/user/home')  # ✅ 누락되어 있었던 부분
+@app.route('/user/home')
 def user_home():
     if 'user_id' not in session:
         return redirect(url_for('login_user'))
@@ -59,6 +66,7 @@ def user_home():
 @app.route('/logout_user')
 def logout_user():
     session.pop('user_id', None)
+    session.pop('role', None)
     return redirect(url_for('login_user'))
 
 @app.route('/order', methods=['POST'])
@@ -92,6 +100,15 @@ def view_orders():
     user_orders = [o for o in orders if o['store'] == session['user_id']]
     return render_template('orders.html', orders=user_orders)
 
+# ✅ 관리자 홈 라우트
+@app.route('/admin/home')
+def admin_home():
+    if 'user_id' not in session or session.get('role') != 'admin':
+        return redirect(url_for('login_user'))
+    return render_template('admin_home.html')
+
+# 실행
 if __name__ == '__main__':
     os.makedirs(UPLOAD_FOLDER, exist_ok=True)
     app.run(host='0.0.0.0', port=10000)
+
