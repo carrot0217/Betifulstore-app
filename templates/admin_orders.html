@@ -2,80 +2,56 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <title>📋 전체 주문 이력</title>
+  <title>전체 주문 이력</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
     body {
       font-family: 'Segoe UI', sans-serif;
-      background-color: #fefaf5;
-      margin: 20px;
+      background-color: #fffaf3;
       color: #333;
+      padding: 20px;
     }
     h1 {
       color: #5a4031;
       text-align: center;
-      margin-bottom: 30px;
     }
-    .filter-box {
-      text-align: center;
+    form {
       margin-bottom: 20px;
-      background: #fff7ec;
-      padding: 15px;
-      border-radius: 10px;
+      text-align: center;
     }
     select {
       padding: 8px;
-      margin: 0 10px;
-      border-radius: 6px;
-      border: 1px solid #ccc;
+      margin-right: 10px;
     }
     table {
       width: 100%;
       border-collapse: collapse;
       margin-top: 20px;
-      background-color: #fff;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-      border-radius: 8px;
-      overflow: hidden;
+      background: white;
     }
     th, td {
-      padding: 12px;
+      border: 1px solid #ccc;
+      padding: 10px;
       text-align: center;
-      border-bottom: 1px solid #eee;
     }
     th {
-      background-color: #ffeacc;
-      color: #5a4031;
-    }
-    tr:nth-child(even) {
-      background-color: #fdf5ee;
-    }
-    .back-link {
-      display: block;
-      margin-top: 30px;
-      text-align: center;
-      text-decoration: none;
-      color: #6c5ce7;
-      font-weight: bold;
-    }
-    .back-link:hover {
-      text-decoration: underline;
+      background-color: #ffe0b2;
     }
   </style>
 </head>
 <body>
-  <h1>📋 전체 주문 이력</h1>
-
-  <form method="POST" class="filter-box">
-    <label for="store">매장 선택:</label>
-    <select name="store" id="store" onchange="this.form.submit()">
-      <option value="">전체</option>
-      {% for store in store_names %}
+  <h1>전체 주문 이력</h1>
+  <form method="post">
+    <label>매장 선택:
+      <select name="store">
+        <option value="">전체</option>
+        {% for store in store_names %}
         <option value="{{ store }}" {% if store == selected_store %}selected{% endif %}>{{ store }}</option>
-      {% endfor %}
-    </select>
+        {% endfor %}
+      </select>
+    </label>
+    <button type="submit">조회</button>
   </form>
-
   <table>
     <thead>
       <tr>
@@ -87,18 +63,16 @@
       </tr>
     </thead>
     <tbody>
-      {% for order in orders %}
-        <tr>
-          <td>{{ order.store }}</td>
-          <td>{{ order.item }}</td>
-          <td>{{ order.quantity }}</td>
-          <td>{{ order.wish_date }}</td>
-          <td>{{ order.date }}</td>
-        </tr>
+      {% for o in orders %}
+      <tr>
+        <td>{{ o.store }}</td>
+        <td>{{ o.item }}</td>
+        <td>{{ o.quantity }}</td>
+        <td>{{ o.wish_date }}</td>
+        <td>{{ o.date }}</td>
+      </tr>
       {% endfor %}
     </tbody>
   </table>
-
-  <a class="back-link" href="/admin/home">← 관리자 홈으로</a>
 </body>
 </html>
