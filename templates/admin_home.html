@@ -2,52 +2,46 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <title>🛠 관리자 홈</title>
+  <title>관리자 홈</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
     body {
       font-family: 'Segoe UI', sans-serif;
       background-color: #fefaf5;
-      color: #333;
-      margin: 0;
-      padding: 40px;
       text-align: center;
+      padding: 50px;
+      color: #5a4031;
     }
     h1 {
-      color: #5a4031;
       margin-bottom: 40px;
     }
-    .button-container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 20px;
-      max-width: 400px;
-      margin: auto;
-    }
-    a.button {
+    .admin-btn {
       display: block;
+      margin: 15px auto;
+      padding: 15px 30px;
+      font-size: 18px;
+      border: none;
+      border-radius: 10px;
       background-color: #ffd180;
       color: #4e342e;
-      text-decoration: none;
-      padding: 15px 20px;
-      border-radius: 10px;
       font-weight: bold;
-      width: 100%;
-      box-shadow: 2px 2px 5px rgba(0,0,0,0.05);
+      cursor: pointer;
+      width: 280px;
+      max-width: 90%;
+      text-decoration: none;
+      box-shadow: 2px 2px 8px rgba(0,0,0,0.1);
       transition: background-color 0.3s;
     }
-    a.button:hover {
+    .admin-btn:hover {
       background-color: #ffcc80;
     }
   </style>
 </head>
 <body>
-  <h1>🛠 관리자 홈</h1>
-  <div class="button-container">
-    <a class="button" href="/admin/users">👥 사용자 등록/삭제</a>
-    <a class="button" href="/admin/orders">📄 전체 주문 이력 보기</a>
-    <a class="button" href="/admin">📦 상품 등록/삭제</a>
-  </div>
+  <h1>👩‍💼 관리자 홈</h1>
+  <a class="admin-btn" href="/admin/users">👥 사용자 등록/삭제</a>
+  <a class="admin-btn" href="/admin/orders">📦 전체 주문 이력 보기</a>
+  <a class="admin-btn" href="/admin">📋 상품 등록/삭제</a>
+  <a class="admin-btn" href="/admin/dashboard">📊 대시보드 보기</a>
 </body>
 </html>
