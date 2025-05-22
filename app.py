@@ -7,36 +7,36 @@ import pandas as pd
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
-
 UPLOAD_FOLDER = 'static/uploads'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
-inventory = []
+inventory = [
+    {"name": "대차", "stock": 50},
+    {"name": "소차", "stock": 30},
+    {"name": "접철", "stock": 20}
+]
 orders = []
 
-# ✅ 관리자와 사용자 구분
+# ✅ 사용자 DB
 users = {
     "gangnam": {"password": "1234", "role": "user"},
     "seochogu": {"password": "abcd1234", "role": "user"},
     "hongdae": {"password": "pppp5555", "role": "user"},
-    "admin": {"password": "admin1234", "role": "admin"}  # 관리자 계정
+    "admin": {"password": "admin1234", "role": "admin"}
 }
 
 @app.route('/')
 def index():
     if 'user_id' not in session:
         return redirect(url_for('login_user'))
-
     keyword = request.args.get('keyword', '')
     sort_by = request.args.get('sort', '')
     success = request.args.get('success')
-
     filtered_inventory = [item for item in inventory if keyword.lower() in item['name'].lower()]
     if sort_by == 'name':
         filtered_inventory.sort(key=lambda x: x['name'])
     elif sort_by == 'stock':
         filtered_inventory.sort(key=lambda x: x['stock'], reverse=True)
-
     return render_template('index.html', inventory=filtered_inventory,
                            keyword=keyword, sort_by=sort_by, success=success)
 
@@ -49,18 +49,14 @@ def login_user():
         if user and user['password'] == password:
             session['user_id'] = user_id
             session['role'] = user['role']
-            if user['role'] == 'admin':
-                return redirect(url_for('admin_home'))
-            else:
-                return redirect(url_for('user_home'))
+            return redirect(url_for('admin_home') if user['role'] == 'admin' else url_for('user_home'))
         else:
             return "로그인 실패: 잘못된 ID 또는 비밀번호입니다."
     return render_template('login_user.html')
 
 @app.route('/logout_user')
 def logout_user():
-    session.pop('user_id', None)
-    session.pop('role', None)
+    session.clear()
     return redirect(url_for('login_user'))
 
 @app.route('/user/home')
@@ -73,17 +69,14 @@ def user_home():
 def order():
     if 'user_id' not in session:
         return redirect(url_for('login_user'))
-
     item_index = int(request.form['item_index'])
     quantity = int(request.form['quantity'])
-    store = session['user_id']
     wish_date = request.form['wish_date']
     item = inventory[item_index]
-
     if item['stock'] >= quantity:
         item['stock'] -= quantity
         orders.append({
-            'store': store,
+            'store': session['user_id'],
             'item': item['name'],
             'quantity': quantity,
             'wish_date': wish_date,
@@ -107,35 +100,65 @@ def admin_home():
         return redirect(url_for('login_user'))
     return render_template('admin_home.html')
 
-# ✅ 관리자 기능 - 사용자 관리
-@app.route('/admin/users')
+# ✅ 사용자 목록 보기
+@app.route('/admin/users', methods=['GET'])
 def manage_users():
     if 'user_id' not in session or session.get('role') != 'admin':
         return redirect(url_for('login_user'))
-    return render_template('manage_users.html')
+    return render_template('manage_users.html', users=users)
 
-# ✅ 관리자 기능 - 주문 이력
+# ✅ 사용자 추가
+@app.route('/admin/users/add', methods=['POST'])
+def add_user():
+    user_id = request.form['user_id']
+    password = request.form['password']
+    role = request.form['role']
+    if user_id not in users:
+        users[user_id] = {'password': password, 'role': role}
+    return redirect(url_for('manage_users'))
+
+# ✅ 사용자 삭제
+@app.route('/admin/users/delete/<user_id>', methods=['POST'])
+def delete_user(user_id):
+    if user_id in users and user_id != 'admin':
+        del users[user_id]
+    return redirect(url_for('manage_users'))
+
+# ✅ 전체 주문 이력
 @app.route('/admin/orders')
 def admin_orders():
     if 'user_id' not in session or session.get('role') != 'admin':
         return redirect(url_for('login_user'))
-    return render_template('admin_orders.html')
+    return render_template('admin_orders.html', orders=orders)
 
-# ✅ 관리자 기능 - 상품 관리
+# ✅ 상품 등록/삭제
 @app.route('/admin/items')
 def manage_items():
     if 'user_id' not in session or session.get('role') != 'admin':
         return redirect(url_for('login_user'))
-    return render_template('manage_items.html')
+    return render_template('manage_items.html', inventory=inventory)
 
-# ✅ 관리자 기능 - 통계 대시보드
+@app.route('/admin/items/add', methods=['POST'])
+def add_item():
+    name = request.form['name']
+    stock = int(request.form['stock'])
+    inventory.append({'name': name, 'stock': stock})
+    return redirect(url_for('manage_items'))
+
+@app.route('/admin/items/delete/<name>', methods=['POST'])
+def delete_item(name):
+    global inventory
+    inventory = [item for item in inventory if item['name'] != name]
+    return redirect(url_for('manage_items'))
+
+# ✅ 관리자 대시보드
 @app.route('/admin/dashboard')
 def admin_dashboard():
     if 'user_id' not in session or session.get('role') != 'admin':
         return redirect(url_for('login_user'))
     return render_template('admin_dashboard.html')
 
-# 서버 실행
+# ✅ 서버 실행
 if __name__ == '__main__':
     os.makedirs(UPLOAD_FOLDER, exist_ok=True)
     app.run(host='0.0.0.0', port=10000)
