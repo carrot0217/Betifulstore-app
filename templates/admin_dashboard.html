@@ -54,17 +54,24 @@
       font-size: 0.9em;
       color: #666;
     }
-    .top-list li {
-      margin: 5px 0;
-    }
     canvas {
       margin-top: 20px;
       background: #fff;
       border-radius: 10px;
       padding: 10px;
     }
-    .download-btn {
-      margin-bottom: 30px;
+    .download-button {
+      display: inline-block;
+      margin: 20px 0;
+      padding: 10px 20px;
+      background-color: #ffd180;
+      border-radius: 6px;
+      color: #4e342e;
+      font-weight: bold;
+      text-decoration: none;
+    }
+    .download-button:hover {
+      background-color: #ffcc80;
     }
     @media (max-width: 600px) {
       .stats-box {
@@ -107,15 +114,6 @@
     </label>
   </form>
 
-  <!-- ✅ 엑셀 다운로드 버튼 -->
-  <form action="/admin/dashboard/download" method="get" class="download-btn">
-    <input type="hidden" name="start" value="{{ start_date }}">
-    <input type="hidden" name="end" value="{{ end_date }}">
-    <input type="hidden" name="store" value="{{ selected_store }}">
-    <input type="hidden" name="item" value="{{ selected_item }}">
-    <button type="submit">📥 엑셀 다운로드</button>
-  </form>
-
   <!-- 통계 요약 -->
   <div class="stats-box">
     <div class="box">
@@ -136,6 +134,10 @@
     </div>
   </div>
 
+  <!-- 매장별 비교 그래프 -->
+  <h2>🏬 매장별 주문 건수 비교</h2>
+  <canvas id="storeChart" height="100"></canvas>
+
   <!-- TOP 5 -->
   <h2>🏅 TOP 5 주문 상품</h2>
   <canvas id="topItemChart" height="100"></canvas>
@@ -145,16 +147,23 @@
   <canvas id="dailyChart" height="100"></canvas>
 
   <br>
+  <a class="download-button"
+     href="/admin/dashboard/download?start={{ start_date }}&end={{ end_date }}&store={{ selected_store }}&item={{ selected_item }}">
+     ⬇ 엑셀 다운로드
+  </a>
+
   <a href="/admin">← 관리자 페이지</a>
 
-  <!-- 그래프 렌더링 -->
+  <!-- 그래프 스크립트 -->
   <script>
     const recentDays = {{ recent_7_days|tojson }};
     const dailyCounts = {{ daily_data|tojson }};
-
     const topItemLabels = {{ top_items | map(attribute=0) | list | tojson }};
     const topItemValues = {{ top_items | map(attribute=1) | list | tojson }};
+    const storeLabels = {{ store_counts.keys()|list|tojson }};
+    const storeValues = {{ store_counts.values()|list|tojson }};
 
+    // 최근 7일 주문 추이
     new Chart(document.getElementById('dailyChart'), {
       type: 'line',
       data: {
@@ -168,12 +177,10 @@
           tension: 0.4
         }]
       },
-      options: {
-        responsive: true,
-        plugins: { legend: { display: false } }
-      }
+      options: { responsive: true, plugins: { legend: { display: false } } }
     });
 
+    // TOP 5 주문 상품
     new Chart(document.getElementById('topItemChart'), {
       type: 'bar',
       data: {
@@ -182,6 +189,24 @@
           label: '상품별 수량',
           data: topItemValues,
           backgroundColor: '#6ab04c'
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { display: false } },
+        scales: { y: { beginAtZero: true } }
+      }
+    });
+
+    // 매장별 주문 건수
+    new Chart(document.getElementById('storeChart'), {
+      type: 'bar',
+      data: {
+        labels: storeLabels,
+        datasets: [{
+          label: '매장별 주문 건수',
+          data: storeValues,
+          backgroundColor: '#74b9ff'
         }]
       },
       options: {
