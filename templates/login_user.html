@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <title>👤 사용자 로그인</title>
+  <title>🔑 사용자 로그인</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
     body {
@@ -28,34 +28,34 @@
       margin-bottom: 25px;
       color: #5a4031;
     }
-    input[type="text"], input[type="password"] {
+    input {
       padding: 10px;
       width: 80%;
-      margin-bottom: 15px;
+      margin-bottom: 10px;
       border: 1px solid #ccc;
       border-radius: 6px;
     }
     button {
       padding: 10px 20px;
-      background-color: #a3d9a5;
+      background-color: #ffcfa0;
       border: none;
       border-radius: 6px;
-      color: #2e5939;
+      color: #5a4031;
       font-weight: bold;
       cursor: pointer;
       transition: background-color 0.3s;
     }
     button:hover {
-      background-color: #8dc997;
+      background-color: #ffbb7d;
     }
   </style>
 </head>
 <body>
   <div class="login-container">
-    <h2>👤 사용자 로그인</h2>
+    <h2>🔑 사용자 로그인</h2>
     <form method="POST">
-      <input type="text" name="user_id" placeholder="매장 ID 입력" required><br>
-      <input type="password" name="password" placeholder="비밀번호 입력" required><br>
+      <input type="text" name="user_id" placeholder="매장 ID" required><br>
+      <input type="password" name="password" placeholder="비밀번호" required><br>
       <button type="submit">로그인</button>
     </form>
   </div>
