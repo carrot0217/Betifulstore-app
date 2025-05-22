@@ -7,58 +7,55 @@
   <style>
     body {
       font-family: 'Segoe UI', sans-serif;
+      margin: 20px;
       background-color: #fefaf5;
       color: #333;
-      margin: 0;
-      padding: 20px;
     }
     h1 {
       color: #5a4031;
     }
     .section {
       background: #fff7ec;
-      padding: 20px;
-      margin-bottom: 25px;
+      border: 1px solid #ddd;
       border-radius: 10px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    label {
+      display: inline-block;
+      margin: 5px 10px 5px 0;
     }
     input[type="text"], input[type="password"] {
-      padding: 10px;
-      margin: 5px 0 10px;
-      border-radius: 6px;
+      padding: 8px;
+      margin-right: 10px;
       border: 1px solid #ccc;
-      width: 100%;
-      box-sizing: border-box;
+      border-radius: 6px;
     }
     button {
-      padding: 10px 20px;
-      background-color: #ffcfa0;
+      padding: 8px 14px;
       border: none;
+      background-color: #ffd180;
+      color: #4e342e;
       border-radius: 6px;
-      color: #5a4031;
-      font-weight: bold;
       cursor: pointer;
-      transition: background-color 0.3s;
+      font-weight: bold;
     }
     button:hover {
-      background-color: #ffbb7d;
+      background-color: #ffcc80;
     }
     .message {
       background: #e0f7fa;
       border-left: 5px solid #4db6ac;
       padding: 10px;
-      margin-bottom: 20px;
+      margin-bottom: 15px;
       border-radius: 5px;
-      color: #00695c;
     }
     ul {
       list-style-type: disc;
-      padding-left: 20px;
+      margin-left: 20px;
     }
     a {
-      display: inline-block;
-      margin-top: 20px;
-      color: #5a4031;
+      color: #6c5ce7;
       text-decoration: none;
     }
     a:hover {
@@ -77,10 +74,8 @@
     <h3>✅ 사용자 추가</h3>
     <form method="post">
       <input type="hidden" name="action" value="add">
-      <label>ID:</label>
-      <input type="text" name="user_id" required>
-      <label>비밀번호:</label>
-      <input type="password" name="password" required>
+      ID: <input type="text" name="user_id" required>
+      비밀번호: <input type="password" name="password" required>
       <button type="submit">추가</button>
     </form>
   </div>
@@ -89,8 +84,7 @@
     <h3>🗑 사용자 삭제</h3>
     <form method="post" onsubmit="return confirm('정말 삭제하시겠습니까?');">
       <input type="hidden" name="action" value="delete">
-      <label>ID:</label>
-      <input type="text" name="user_id" required>
+      ID: <input type="text" name="user_id" required>
       <button type="submit">삭제</button>
     </form>
   </div>
@@ -98,12 +92,12 @@
   <div class="section">
     <h3>📋 현재 등록된 사용자 목록</h3>
     <ul>
-      {% for user in users %}
-        <li>{{ user }}</li>
+      {% for uid in users.keys() %}
+        <li>{{ uid }}</li>
       {% endfor %}
     </ul>
   </div>
 
-  <a href="/admin/home">← 관리자 홈으로</a>
+  <a href="/admin/home">← 관리자 홈</a>
 </body>
 </html>
