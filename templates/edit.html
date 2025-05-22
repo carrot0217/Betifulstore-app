@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <title>🛠️ 상품 수정</title>
+  <title>✏️ 상품 수정</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
     body {
@@ -14,44 +14,43 @@
     h1 {
       color: #5a4031;
     }
-    .form-section {
+    .form-box {
       background: #fff7ec;
-      padding: 20px;
+      border: 1px solid #ddd;
       border-radius: 12px;
+      padding: 20px;
       max-width: 500px;
-      margin: auto;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+      margin: 0 auto;
     }
     label {
       display: block;
-      margin: 15px 0 5px;
+      margin: 10px 0 5px;
       font-weight: bold;
     }
-    input, textarea {
+    input[type="text"], input[type="number"] {
       width: 100%;
       padding: 10px;
-      border-radius: 6px;
       border: 1px solid #ccc;
-      box-sizing: border-box;
+      border-radius: 6px;
+      margin-bottom: 15px;
     }
     button {
-      margin-top: 20px;
-      background-color: #ffe4b5;
-      color: #4e342e;
-      padding: 10px 20px;
+      background-color: #ffd180;
       border: none;
-      border-radius: 6px;
+      padding: 10px 20px;
+      color: #4e342e;
       font-weight: bold;
+      border-radius: 6px;
       cursor: pointer;
+      transition: background-color 0.3s;
     }
     button:hover {
-      background-color: #ffddb0;
+      background-color: #ffcc80;
     }
     a {
-      display: block;
-      margin-top: 30px;
-      text-align: center;
-      color: #888;
+      display: inline-block;
+      margin-top: 20px;
+      color: #6c5ce7;
       text-decoration: none;
     }
     a:hover {
@@ -60,21 +59,25 @@
   </style>
 </head>
 <body>
-  <h1>🛠️ 상품 수정</h1>
-  <div class="form-section">
-    <form method="POST">
-      <label for="name">상품명:</label>
+
+  <h1>✏️ 상품 수정</h1>
+
+  <div class="form-box">
+    <form method="post">
+      <label for="name">상품명</label>
       <input type="text" id="name" name="name" value="{{ item.name }}" required>
 
-      <label for="description">설명:</label>
-      <textarea id="description" name="description" rows="4" required>{{ item.description }}</textarea>
+      <label for="description">설명</label>
+      <input type="text" id="description" name="description" value="{{ item.description }}" required>
 
-      <label for="stock">수량:</label>
-      <input type="number" id="stock" name="stock" min="0" value="{{ item.stock }}" required>
+      <label for="stock">재고 수량</label>
+      <input type="number" id="stock" name="stock" value="{{ item.stock }}" required>
 
-      <button type="submit">저장</button>
+      <button type="submit">수정 완료</button>
     </form>
   </div>
-  <a href="/admin">← 관리자 페이지로 돌아가기</a>
+
+  <a href="/admin">← 상품 목록으로 돌아가기</a>
+
 </body>
 </html>
