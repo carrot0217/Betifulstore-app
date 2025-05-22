@@ -113,6 +113,25 @@ def admin_home():
         return redirect(url_for('login'))
     return render_template('admin_home.html')
 
+@app.route('/admin/orders', methods=['GET', 'POST'])
+def admin_orders():
+    if 'logged_in' not in session:
+        return redirect(url_for('login'))
+
+    selected_store = request.form.get('store')
+    filtered_orders = orders
+    if selected_store:
+        filtered_orders = [o for o in orders if o['store'] == selected_store]
+    store_names = sorted(set(o['store'] for o in orders))
+
+    return render_template('admin_orders.html', orders=filtered_orders, store_names=store_names, selected_store=selected_store)
+
+@app.route('/admin')
+def admin():
+    if 'logged_in' not in session:
+        return redirect(url_for('login'))
+    return render_template('admin.html', inventory=inventory)
+
 @app.route('/admin/dashboard')
 def admin_dashboard():
     if 'logged_in' not in session:
