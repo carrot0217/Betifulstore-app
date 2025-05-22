@@ -1,12 +1,63 @@
 <!DOCTYPE html>
-<html>
-<head><title>매장 로그인</title></head>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>👤 사용자 로그인</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #fefaf5;
+      color: #333;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .login-container {
+      background: #fffaf0;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+      text-align: center;
+      width: 90%;
+      max-width: 400px;
+    }
+    h2 {
+      margin-bottom: 25px;
+      color: #5a4031;
+    }
+    input[type="text"], input[type="password"] {
+      padding: 10px;
+      width: 80%;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+    button {
+      padding: 10px 20px;
+      background-color: #a3d9a5;
+      border: none;
+      border-radius: 6px;
+      color: #2e5939;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    button:hover {
+      background-color: #8dc997;
+    }
+  </style>
+</head>
 <body>
-  <h1>매장 로그인</h1>
-  <form method="post">
-    ID: <input type="text" name="user_id" required><br>
-    비밀번호: <input type="password" name="password" required><br>
-    <button type="submit">로그인</button>
-  </form>
+  <div class="login-container">
+    <h2>👤 사용자 로그인</h2>
+    <form method="POST">
+      <input type="text" name="user_id" placeholder="매장 ID 입력" required><br>
+      <input type="password" name="password" placeholder="비밀번호 입력" required><br>
+      <button type="submit">로그인</button>
+    </form>
+  </div>
 </body>
 </html>
