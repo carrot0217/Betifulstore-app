@@ -63,20 +63,27 @@
       border-radius: 10px;
       padding: 10px;
     }
+    .download-section {
+      margin-top: 30px;
+      text-align: center;
+    }
     .download-button {
-      margin-top: 20px;
-      text-align: right;
-    }
-    .download-button a {
-      background-color: #ffd180;
-      color: #4e342e;
-      padding: 8px 12px;
-      text-decoration: none;
-      border-radius: 6px;
+      background-color: #ffcfa0;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      color: #5a4031;
       font-weight: bold;
+      cursor: pointer;
     }
-    .download-button a:hover {
-      background-color: #ffcc80;
+    .download-button:hover {
+      background-color: #ffbb7d;
+    }
+    .loading-message {
+      margin-top: 10px;
+      color: #6c5ce7;
+      font-weight: bold;
+      display: none;
     }
     @media (max-width: 600px) {
       .stats-box {
@@ -88,6 +95,12 @@
   <script>
     function autoSubmit() {
       document.getElementById('filterForm').submit();
+    }
+
+    function downloadWithLoading() {
+      document.getElementById("loadingMsg").style.display = "block";
+      const params = new URLSearchParams(window.location.search);
+      window.location.href = "/admin/dashboard/download?" + params.toString();
     }
   </script>
 </head>
@@ -147,17 +160,10 @@
   <h2>📈 최근 7일 주문 추이</h2>
   <canvas id="dailyChart" height="100"></canvas>
 
-  <!-- 매장별 비교 -->
-  <h2>🏬 매장별 주문 수량 비교</h2>
-  <canvas id="storeChart" height="100"></canvas>
-
-  <!-- 품목별 비교 -->
-  <h2>📦 품목별 주문 수량 비교</h2>
-  <canvas id="itemChart" height="100"></canvas>
-
   <!-- 다운로드 버튼 -->
-  <div class="download-button">
-    <a href="/admin/dashboard/download?start={{ start_date }}&end={{ end_date }}&store={{ selected_store }}&item={{ selected_item }}">📥 엑셀 다운로드</a>
+  <div class="download-section">
+    <button class="download-button" onclick="downloadWithLoading()">📥 엑셀 다운로드</button>
+    <div id="loadingMsg" class="loading-message">📂 파일을 준비 중입니다. 잠시만 기다려주세요...</div>
   </div>
 
   <br>
@@ -169,10 +175,6 @@
     const dailyCounts = {{ daily_data|tojson }};
     const topItemLabels = {{ top_items | map(attribute=0) | list | tojson }};
     const topItemValues = {{ top_items | map(attribute=1) | list | tojson }};
-    const storeLabels = {{ store_counts.keys() | list | tojson }};
-    const storeValues = {{ store_counts.values() | list | tojson }};
-    const itemLabels = {{ item_counts.keys() | list | tojson }};
-    const itemValues = {{ item_counts.values() | list | tojson }};
 
     new Chart(document.getElementById('dailyChart'), {
       type: 'line',
@@ -187,7 +189,10 @@
           tension: 0.4
         }]
       },
-      options: { responsive: true, plugins: { legend: { display: false } } }
+      options: {
+        responsive: true,
+        plugins: { legend: { display: false } }
+      }
     });
 
     new Chart(document.getElementById('topItemChart'), {
@@ -200,33 +205,11 @@
           backgroundColor: '#6ab04c'
         }]
       },
-      options: { responsive: true, plugins: { legend: { display: false } } }
-    });
-
-    new Chart(document.getElementById('storeChart'), {
-      type: 'bar',
-      data: {
-        labels: storeLabels,
-        datasets: [{
-          label: '매장별 수량',
-          data: storeValues,
-          backgroundColor: '#74b9ff'
-        }]
-      },
-      options: { responsive: true, plugins: { legend: { display: false } } }
-    });
-
-    new Chart(document.getElementById('itemChart'), {
-      type: 'bar',
-      data: {
-        labels: itemLabels,
-        datasets: [{
-          label: '상품별 수량',
-          data: itemValues,
-          backgroundColor: '#ffeaa7'
-        }]
-      },
-      options: { responsive: true, plugins: { legend: { display: false } } }
+      options: {
+        responsive: true,
+        plugins: { legend: { display: false } },
+        scales: { y: { beginAtZero: true } }
+      }
     });
   </script>
 </body>
