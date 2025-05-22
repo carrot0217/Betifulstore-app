@@ -1,3 +1,4 @@
+
 from flask import Flask, render_template, request, redirect, url_for, session, send_file
 from werkzeug.utils import secure_filename
 from datetime import datetime, timedelta
@@ -62,7 +63,7 @@ def login():
         password = request.form['password']
         if password == 'admin123':
             session['logged_in'] = True
-            return redirect(url_for('admin'))
+            return redirect(url_for('admin_home'))
         else:
             return "비밀번호가 틀렸습니다."
     return render_template('login.html')
@@ -71,6 +72,12 @@ def login():
 def logout():
     session.pop('logged_in', None)
     return redirect(url_for('index'))
+
+@app.route('/admin/home')
+def admin_home():
+    if 'logged_in' not in session:
+        return redirect(url_for('login'))
+    return render_template('admin_home.html')
 
 @app.route('/admin', methods=['GET', 'POST'])
 def admin():
@@ -264,3 +271,4 @@ def manage_users():
 if __name__ == '__main__':
     os.makedirs(UPLOAD_FOLDER, exist_ok=True)
     app.run(host='0.0.0.0', port=10000)
+
