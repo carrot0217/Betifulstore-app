@@ -14,7 +14,7 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 inventory = []
 orders = []
 
-# ✅ 사용자 및 관리자 계정 구성
+# ✅ 관리자와 사용자 구분
 users = {
     "gangnam": {"password": "1234", "role": "user"},
     "seochogu": {"password": "abcd1234", "role": "user"},
@@ -26,7 +26,7 @@ users = {
 def index():
     if 'user_id' not in session:
         return redirect(url_for('login_user'))
-    
+
     keyword = request.args.get('keyword', '')
     sort_by = request.args.get('sort', '')
     success = request.args.get('success')
@@ -36,7 +36,7 @@ def index():
         filtered_inventory.sort(key=lambda x: x['name'])
     elif sort_by == 'stock':
         filtered_inventory.sort(key=lambda x: x['stock'], reverse=True)
-    
+
     return render_template('index.html', inventory=filtered_inventory,
                            keyword=keyword, sort_by=sort_by, success=success)
 
@@ -57,17 +57,17 @@ def login_user():
             return "로그인 실패: 잘못된 ID 또는 비밀번호입니다."
     return render_template('login_user.html')
 
-@app.route('/user/home')
-def user_home():
-    if 'user_id' not in session:
-        return redirect(url_for('login_user'))
-    return render_template('user_home.html')
-
 @app.route('/logout_user')
 def logout_user():
     session.pop('user_id', None)
     session.pop('role', None)
     return redirect(url_for('login_user'))
+
+@app.route('/user/home')
+def user_home():
+    if 'user_id' not in session:
+        return redirect(url_for('login_user'))
+    return render_template('user_home.html')
 
 @app.route('/order', methods=['POST'])
 def order():
@@ -100,15 +100,35 @@ def view_orders():
     user_orders = [o for o in orders if o['store'] == session['user_id']]
     return render_template('orders.html', orders=user_orders)
 
-# ✅ 관리자 홈 라우트
+# ✅ 관리자 홈
 @app.route('/admin/home')
 def admin_home():
     if 'user_id' not in session or session.get('role') != 'admin':
         return redirect(url_for('login_user'))
     return render_template('admin_home.html')
 
-# 실행
+# ✅ 관리자 기능 - 사용자 관리
+@app.route('/admin/users')
+def manage_users():
+    if 'user_id' not in session or session.get('role') != 'admin':
+        return redirect(url_for('login_user'))
+    return render_template('manage_users.html')
+
+# ✅ 관리자 기능 - 주문 이력
+@app.route('/admin/orders')
+def admin_orders():
+    if 'user_id' not in session or session.get('role') != 'admin':
+        return redirect(url_for('login_user'))
+    return render_template('admin_orders.html')
+
+# ✅ 관리자 기능 - 상품 관리
+@app.route('/admin/items')
+def manage_items():
+    if 'user_id' not in session or session.get('role') != 'admin':
+        return redirect(url_for('login_user'))
+    return render_template('manage_items.html')
+
+# 서버 실행
 if __name__ == '__main__':
     os.makedirs(UPLOAD_FOLDER, exist_ok=True)
     app.run(host='0.0.0.0', port=10000)
-
