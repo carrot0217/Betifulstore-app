@@ -1,33 +1,127 @@
 <!DOCTYPE html>
-<html>
-<head><title>관리자 상품 등록</title></head>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>🧸 상품 등록</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #fefaf5;
+      color: #333;
+      margin: 20px;
+    }
+    h1 {
+      color: #5a4031;
+    }
+    .form-box, .inventory-box {
+      background: #fff7ec;
+      padding: 20px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
+    label {
+      display: block;
+      margin: 10px 0 5px;
+    }
+    input[type="text"], input[type="number"], input[type="file"] {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      box-sizing: border-box;
+    }
+    button {
+      margin-top: 15px;
+      background-color: #ffe0b2;
+      color: #5a4031;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #ffcc80;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background-color: #fffaf0;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 10px;
+      text-align: center;
+    }
+    th {
+      background-color: #ffe0b2;
+      color: #5a4031;
+    }
+    img {
+      max-width: 100px;
+      height: auto;
+    }
+    .action-btns form {
+      display: inline-block;
+    }
+    @media (max-width: 600px) {
+      input[type="text"], input[type="number"], input[type="file"], button {
+        font-size: 14px;
+      }
+    }
+  </style>
+</head>
 <body>
-  <h1>상품 등록 (관리자)</h1>
-  <form method="post" enctype="multipart/form-data">
-    이름: <input type="text" name="name" required><br>
-    설명: <input type="text" name="description" required><br>
-    재고 수량: <input type="number" name="stock" required><br>
-    이미지 업로드: <input type="file" name="image" required><br>
-    <button type="submit">등록</button>
-  </form>
+  <h1>🧸 상품 등록</h1>
+  <div class="form-box">
+    <form method="POST" enctype="multipart/form-data">
+      <label>상품명:</label>
+      <input type="text" name="name" required>
+      <label>설명:</label>
+      <input type="text" name="description" required>
+      <label>재고 수량:</label>
+      <input type="number" name="stock" min="0" required>
+      <label>이미지 업로드:</label>
+      <input type="file" name="image" accept="image/*" required>
+      <button type="submit">등록</button>
+    </form>
+  </div>
 
-  <h2>등록된 상품 목록</h2>
-  {% for item in inventory %}
-    <div style="border:1px solid #ccc; padding:10px; margin:10px;">
-      <img src="{{ item.image }}" width="100"><br>
-      <strong>{{ item.name }}</strong><br>
-      {{ item.description }}<br>
-      재고: {{ item.stock }}개
-      <form method="post" action="/delete/{{ loop.index0 }}">
-        <button type="submit">삭제</button>
-      </form>
-<form method="get" action="/edit/{{ loop.index0 }}">
-  <button type="submit">수정</button>
-</form>
+  <div class="inventory-box">
+    <h2>📦 등록된 상품 목록</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>이미지</th>
+          <th>상품명</th>
+          <th>설명</th>
+          <th>재고</th>
+          <th>수정/삭제</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for i, item in enumerate(inventory) %}
+        <tr>
+          <td><img src="{{ url_for('static', filename=item.image.split('static/')[1]) }}" alt="상품 이미지"></td>
+          <td>{{ item.name }}</td>
+          <td>{{ item.description }}</td>
+          <td>{{ item.stock }}</td>
+          <td class="action-btns">
+            <form method="GET" action="{{ url_for('edit', index=i) }}">
+              <button type="submit">수정</button>
+            </form>
+            <form method="POST" action="{{ url_for('delete', index=i) }}" onsubmit="return confirm('정말 삭제하시겠습니까?');">
+              <button type="submit">삭제</button>
+            </form>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
 
-    </div>
-  {% endfor %}
-
-  <a href="/logout">← 로그아웃</a> | <a href="/">사용자 화면</a>
+  <a href="/admin/dashboard">← 관리자 대시보드</a>
 </body>
 </html>
