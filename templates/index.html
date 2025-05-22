@@ -2,52 +2,56 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>상품 목록</title>
+  <title>🛒 상품 목록</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
     body {
       font-family: 'Segoe UI', sans-serif;
-      background-color: #f8f2e9; /* 베이지색 웜톤 배경 */
-      margin: 0;
-      padding: 20px;
+      background-color: #fefaf5;
       color: #333;
+      margin: 20px;
     }
     h1 {
-      color: #5e4b3c;
+      color: #5a4031;
     }
-    .product {
-      border: 1px solid #d2b48c;
-      background-color: #fffaf3;
-      padding: 15px;
+    form {
       margin-bottom: 20px;
-      border-radius: 12px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      background: #fff7ec;
+      padding: 15px;
+      border-radius: 10px;
+      border: 1px solid #ddd;
     }
-    .product img {
-      max-width: 100%;
-      height: auto;
-      border-radius: 8px;
-    }
-    .product form {
-      margin-top: 10px;
-    }
-    input, select, button {
+    label, select, input[type="text"], input[type="date"], input[type="number"] {
+      margin: 5px 10px 5px 0;
       padding: 8px;
-      margin: 5px 0;
-      width: 100%;
-      box-sizing: border-box;
       border-radius: 6px;
       border: 1px solid #ccc;
     }
+    select {
+      background-color: #fffaf0;
+    }
     button {
-      background-color: #ffe4b5; /* 파스텔 버튼 */
-      color: #4b3832;
+      background-color: #ffd180;
+      color: #4e342e;
       border: none;
+      padding: 8px 14px;
+      border-radius: 6px;
+      font-weight: bold;
       cursor: pointer;
-      transition: background-color 0.3s;
     }
     button:hover {
-      background-color: #ffdab9;
+      background-color: #ffcc80;
+    }
+    .product {
+      background: #fff1dc;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 1px 1px 5px rgba(0,0,0,0.05);
+      margin-bottom: 20px;
+    }
+    .product img {
+      max-width: 100%;
+      border-radius: 10px;
     }
     .footer-link {
       display: block;
@@ -58,7 +62,7 @@
     }
     @media (max-width: 600px) {
       body {
-        padding: 10px;
+        margin: 10px;
       }
     }
   </style>
@@ -72,32 +76,39 @@
   </script>
 </head>
 <body>
-  <h1>상품 목록</h1>
+  <h1>🛍 상품 목록</h1>
+
   <form method="get">
-    상품 검색:
-    <input type="text" name="keyword" value="{{ keyword }}">
-    정렬:
-    <select name="sort">
-      <option value="">-- 선택 --</option>
-      <option value="name" {% if sort_by == 'name' %}selected{% endif %}>이름순</option>
-      <option value="stock" {% if sort_by == 'stock' %}selected{% endif %}>재고 많은 순</option>
-    </select>
+    <label>상품 검색:
+      <input type="text" name="keyword" value="{{ keyword }}">
+    </label>
+    <label>정렬:
+      <select name="sort">
+        <option value="">-- 선택 --</option>
+        <option value="name" {% if sort_by == 'name' %}selected{% endif %}>이름순</option>
+        <option value="stock" {% if sort_by == 'stock' %}selected{% endif %}>재고 많은 순</option>
+      </select>
+    </label>
     <button type="submit">검색</button>
   </form>
 
   {% for item in inventory %}
     <div class="product">
       <img src="{{ item.image }}" alt="{{ item.name }}">
-      <strong>{{ item.name }}</strong><br>
-      {{ item.description }}<br>
-      재고: {{ item.stock }}개
+      <h3>{{ item.name }}</h3>
+      <p>{{ item.description }}</p>
+      <p>재고: {{ item.stock }}개</p>
+
       {% if item.stock > 0 %}
         <form method="post" action="/order">
           <input type="hidden" name="item_index" value="{{ loop.index0 }}">
-          매장명: <input type="text" name="store" required><br>
-          수량: <input type="number" name="quantity" min="1" max="{{ item.stock }}"
-                       required oninput="checkQuantity(this, {{ item.stock }})"><br>
-          입고 희망일: <input type="date" name="wish_date" required><br>
+          <label>수량:
+            <input type="number" name="quantity" min="1" max="{{ item.stock }}" required
+                   oninput="checkQuantity(this, {{ item.stock }})">
+          </label><br>
+          <label>입고 희망일:
+            <input type="date" name="wish_date" required>
+          </label><br>
           <button type="submit">신청하기</button>
         </form>
       {% else %}
@@ -106,6 +117,6 @@
     </div>
   {% endfor %}
 
-  <a class="footer-link" href="/orders">내 주문 이력 보기</a>
+  <a class="footer-link" href="/orders">📄 내 주문 이력 보기</a>
 </body>
 </html>
