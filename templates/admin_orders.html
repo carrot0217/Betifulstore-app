@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <title>📦 전체 주문 이력</title>
+  <title>📋 전체 주문 이력</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
     body {
@@ -11,100 +11,79 @@
       margin: 20px;
       color: #333;
     }
-
     h1 {
       color: #5a4031;
       text-align: center;
+      margin-bottom: 30px;
     }
-
-    .filter-form {
+    .filter-box {
+      text-align: center;
+      margin-bottom: 20px;
       background: #fff7ec;
       padding: 15px;
-      border: 1px solid #ddd;
       border-radius: 10px;
-      margin-bottom: 20px;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      align-items: center;
-      justify-content: center;
     }
-
-    select, button {
+    select {
       padding: 8px;
+      margin: 0 10px;
       border-radius: 6px;
       border: 1px solid #ccc;
-      background-color: #fffaf0;
     }
-
-    button {
-      background-color: #ffd180;
-      color: #4e342e;
-      border: none;
-      cursor: pointer;
-      font-weight: bold;
-    }
-
-    button:hover {
-      background-color: #ffcc80;
-    }
-
     table {
       width: 100%;
       border-collapse: collapse;
-      background: #fffefb;
+      margin-top: 20px;
+      background-color: #fff;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+      border-radius: 8px;
+      overflow: hidden;
     }
-
     th, td {
-      border: 1px solid #ddd;
-      padding: 10px;
+      padding: 12px;
       text-align: center;
+      border-bottom: 1px solid #eee;
     }
-
     th {
-      background-color: #ffecd2;
+      background-color: #ffeacc;
       color: #5a4031;
     }
-
     tr:nth-child(even) {
-      background-color: #fffaf0;
+      background-color: #fdf5ee;
     }
-
-    a {
-      display: inline-block;
-      margin-top: 20px;
+    .back-link {
+      display: block;
+      margin-top: 30px;
+      text-align: center;
       text-decoration: none;
       color: #6c5ce7;
       font-weight: bold;
     }
-
-    a:hover {
+    .back-link:hover {
       text-decoration: underline;
     }
   </style>
 </head>
 <body>
-  <h1>📦 전체 주문 이력</h1>
+  <h1>📋 전체 주문 이력</h1>
 
-  <form method="post" class="filter-form">
+  <form method="POST" class="filter-box">
     <label for="store">매장 선택:</label>
-    <select name="store" id="store">
+    <select name="store" id="store" onchange="this.form.submit()">
       <option value="">전체</option>
       {% for store in store_names %}
         <option value="{{ store }}" {% if store == selected_store %}selected{% endif %}>{{ store }}</option>
       {% endfor %}
     </select>
-    <button type="submit">조회</button>
   </form>
 
   <table>
     <thead>
       <tr>
-        <th>매장</th>
+        <th>매장명</th>
         <th>상품명</th>
         <th>수량</th>
+        <th>희망일</th>
         <th>신청일</th>
-        <th>요청일</th>
       </tr>
     </thead>
     <tbody>
@@ -113,13 +92,13 @@
           <td>{{ order.store }}</td>
           <td>{{ order.item }}</td>
           <td>{{ order.quantity }}</td>
-          <td>{{ order.date }}</td>
           <td>{{ order.wish_date }}</td>
+          <td>{{ order.date }}</td>
         </tr>
       {% endfor %}
     </tbody>
   </table>
 
-  <a href="/admin/home">← 관리자 홈</a>
+  <a class="back-link" href="/admin/home">← 관리자 홈으로</a>
 </body>
 </html>
