@@ -82,7 +82,7 @@
 
   <div class="section">
     <h3>🗑 사용자 삭제</h3>
-    <form method="post" onsubmit="return confirm('정말 삭제하시겠습니까?');">
+    <form method="post">
       <input type="hidden" name="action" value="delete">
       ID: <input type="text" name="user_id" required>
       <button type="submit">삭제</button>
@@ -92,12 +92,12 @@
   <div class="section">
     <h3>📋 현재 등록된 사용자 목록</h3>
     <ul>
-      {% for uid in users.keys() %}
-        <li>{{ uid }}</li>
+      {% for user in users %}
+        <li>{{ user }}</li>
       {% endfor %}
     </ul>
   </div>
 
-  <a href="/admin/home">← 관리자 홈</a>
+  <a href="/admin/home">← 관리자 홈으로</a>
 </body>
 </html>
