@@ -14,7 +14,6 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 inventory = []
 orders = []
 
-# 사용자 계정
 users = {
     "gangnam": "1234",
     "seochogu": "abcd1234",
@@ -180,20 +179,24 @@ def admin_dashboard():
     top_items = sorted(item_counts.items(), key=lambda x: x[1], reverse=True)[:5]
     store_list = sorted(set(o['store'] for o in orders))
     item_list = sorted(set(o['item'] for o in orders))
-    return render_template('admin_dashboard.html', total_orders=total_orders, total_quantity=total_quantity,
-                           store_counts=store_counts, item_counts=item_counts, recent_7_days=recent_7_days,
-                           daily_data=daily_data, top_items=top_items, start_date=start_date or '',
-                           end_date=end_date or '', selected_store=selected_store or '',
-                           selected_item=selected_item or '', store_list=store_list, item_list=item_list)
+    return render_template('admin_dashboard.html',
+                           total_orders=total_orders, total_quantity=total_quantity,
+                           store_counts=store_counts, item_counts=item_counts,
+                           recent_7_days=recent_7_days, daily_data=daily_data, top_items=top_items,
+                           start_date=start_date or '', end_date=end_date or '',
+                           selected_store=selected_store or '', selected_item=selected_item or '',
+                           store_list=store_list, item_list=item_list)
 
 @app.route('/admin/dashboard/download')
 def download_dashboard_data():
     if 'logged_in' not in session:
         return redirect(url_for('login'))
+
     start_date = request.args.get('start')
     end_date = request.args.get('end')
     selected_store = request.args.get('store')
     selected_item = request.args.get('item')
+
     filtered_orders = orders
     if start_date and end_date:
         try:
@@ -207,15 +210,23 @@ def download_dashboard_data():
         filtered_orders = [o for o in filtered_orders if o['store'] == selected_store]
     if selected_item:
         filtered_orders = [o for o in filtered_orders if o['item'] == selected_item]
+
+    if not filtered_orders:
+        return render_template("no_data.html")
+
     df = pd.DataFrame(filtered_orders)
     output = io.BytesIO()
     with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
         df.to_excel(writer, index=False, sheet_name='주문통계')
     output.seek(0)
+
+    today_str = datetime.now().strftime('%Y%m%d')
+    filename = f"주문통계_{today_str}.xlsx"
+
     return send_file(output,
                      mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
                      as_attachment=True,
-                     download_name='주문통계.xlsx')
+                     download_name=filename)
 
 @app.route('/wakeup')
 def wakeup():
