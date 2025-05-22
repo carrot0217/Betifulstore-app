@@ -11,7 +11,7 @@
       background-color: #fefaf5;
       color: #333;
     }
-    h1 {
+    h1, h2 {
       color: #5a4031;
     }
     .filter-section {
@@ -54,21 +54,14 @@
       font-size: 0.9em;
       color: #666;
     }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-bottom: 30px;
-    }
-    th, td {
-      border: 1px solid #ddd;
-      padding: 8px 10px;
-      text-align: center;
-    }
-    th {
-      background-color: #f7e1c5;
-    }
     .top-list li {
       margin: 5px 0;
+    }
+    canvas {
+      margin-top: 20px;
+      background: #fff;
+      border-radius: 10px;
+      padding: 10px;
     }
     @media (max-width: 600px) {
       .stats-box {
@@ -76,8 +69,8 @@
       }
     }
   </style>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script>
-    // 자동 필터링: 변경 시 자동 제출
     function autoSubmit() {
       document.getElementById('filterForm').submit();
     }
@@ -86,7 +79,7 @@
 <body>
   <h1>📊 관리자 통계 대시보드</h1>
 
-  <!-- 필터 영역 -->
+  <!-- 필터 -->
   <form id="filterForm" method="get" class="filter-section">
     <label>기간:
       <input type="date" name="start" value="{{ start_date }}" onchange="autoSubmit()">
@@ -111,7 +104,7 @@
     </label>
   </form>
 
-  <!-- 통계 박스 -->
+  <!-- 통계 요약 -->
   <div class="stats-box">
     <div class="box">
       <h2>{{ total_orders }}</h2>
@@ -131,29 +124,60 @@
     </div>
   </div>
 
-  <!-- TOP5 상품 -->
-  <h2>📦 TOP 5 주문 상품</h2>
-  <ul class="top-list">
-    {% for item, qty in top_items %}
-      <li>{{ item }}: {{ qty }}개</li>
-    {% endfor %}
-  </ul>
+  <!-- TOP 5 -->
+  <h2>🏅 TOP 5 주문 상품</h2>
+  <canvas id="topItemChart" height="100"></canvas>
 
-  <!-- 최근 7일 데이터 -->
-  <h2>📅 최근 7일 주문 현황</h2>
-  <table>
-    <tr>
-      {% for day in recent_7_days %}
-        <th>{{ day }}</th>
-      {% endfor %}
-    </tr>
-    <tr>
-      {% for val in daily_data %}
-        <td>{{ val }}</td>
-      {% endfor %}
-    </tr>
-  </table>
+  <!-- 최근 7일 -->
+  <h2>📈 최근 7일 주문 추이</h2>
+  <canvas id="dailyChart" height="100"></canvas>
 
+  <br>
   <a href="/admin">← 관리자 페이지</a>
+
+  <!-- 그래프 렌더링 -->
+  <script>
+    const recentDays = {{ recent_7_days|tojson }};
+    const dailyCounts = {{ daily_data|tojson }};
+
+    const topItemLabels = {{ top_items | map(attribute=0) | list | tojson }};
+    const topItemValues = {{ top_items | map(attribute=1) | list | tojson }};
+
+    new Chart(document.getElementById('dailyChart'), {
+      type: 'line',
+      data: {
+        labels: recentDays,
+        datasets: [{
+          label: '일별 주문 수량',
+          data: dailyCounts,
+          borderColor: '#f0932b',
+          backgroundColor: 'rgba(240, 147, 43, 0.2)',
+          fill: true,
+          tension: 0.4
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { display: false } }
+      }
+    });
+
+    new Chart(document.getElementById('topItemChart'), {
+      type: 'bar',
+      data: {
+        labels: topItemLabels,
+        datasets: [{
+          label: '상품별 수량',
+          data: topItemValues,
+          backgroundColor: '#6ab04c'
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { display: false } },
+        scales: { y: { beginAtZero: true } }
+      }
+    });
+  </script>
 </body>
 </html>
