@@ -45,10 +45,16 @@ def login_user():
         password = request.form['password']
         if user_id in users and users[user_id] == password:
             session['user_id'] = user_id
-            return redirect(url_for('index'))
+            return redirect(url_for('user_home'))  # 사용자 홈으로 리디렉션
         else:
             return "로그인 실패: 잘못된 ID 또는 비밀번호입니다."
     return render_template('login_user.html')
+
+@app.route('/user/home')  # ✅ 누락되어 있었던 부분
+def user_home():
+    if 'user_id' not in session:
+        return redirect(url_for('login_user'))
+    return render_template('user_home.html')
 
 @app.route('/logout_user')
 def logout_user():
