@@ -2,53 +2,58 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <title>❌ 다운로드 실패</title>
+  <title>📄 데이터 없음</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
     body {
-      background-color: #fffaf0;
       font-family: 'Segoe UI', sans-serif;
-      color: #333;
-      padding: 50px;
+      background-color: #fefaf5;
+      color: #5a4031;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
       text-align: center;
     }
-    .card {
-      display: inline-block;
-      padding: 30px;
-      background-color: #ffe8e8;
-      border: 1px solid #ffaaaa;
-      border-radius: 10px;
-      box-shadow: 2px 2px 10px rgba(0,0,0,0.05);
+    .container {
+      background-color: #fff7ec;
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
     }
-    h1 {
-      color: #d63031;
+    .icon {
+      font-size: 60px;
       margin-bottom: 20px;
     }
+    h1 {
+      margin-bottom: 10px;
+    }
     p {
-      margin: 10px 0;
-      font-size: 16px;
+      color: #666;
     }
     a {
-      display: inline-block;
       margin-top: 20px;
-      text-decoration: none;
-      color: #5a4031;
-      background: #ffd180;
+      display: inline-block;
       padding: 10px 20px;
-      border-radius: 8px;
+      background-color: #ffd180;
+      color: #4e342e;
+      text-decoration: none;
+      border-radius: 6px;
+      font-weight: bold;
     }
     a:hover {
-      background: #ffcc80;
+      background-color: #ffcc80;
     }
   </style>
 </head>
 <body>
-  <div class="card">
-    <h1>❌ 다운로드할 데이터가 없습니다.</h1>
-    <p>선택한 조건에 해당하는 주문 데이터가 없습니다.</p>
-    <p><strong>기간:</strong> {{ start }} ~ {{ end }}</p>
-    {% if store %}<p><strong>매장:</strong> {{ store }}</p>{% endif %}
-    {% if item %}<p><strong>상품:</strong> {{ item }}</p>{% endif %}
-    <a href="{{ url_for('admin_dashboard') }}">← 대시보드로 돌아가기</a>
+  <div class="container">
+    <div class="icon">📭</div>
+    <h1>다운로드할 데이터가 없습니다</h1>
+    <p>선택된 기간이나 조건에 맞는 주문 기록이 존재하지 않습니다.</p>
+    <a href="/admin/dashboard">← 대시보드로 돌아가기</a>
   </div>
 </body>
 </html>
