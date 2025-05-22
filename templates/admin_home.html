@@ -1,1 +1,49 @@
-
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>🛠 관리자 홈</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #fefaf5;
+      color: #333;
+      text-align: center;
+      padding: 40px;
+    }
+    h1 {
+      color: #5a4031;
+      margin-bottom: 40px;
+    }
+    .button-container {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      max-width: 300px;
+      margin: 0 auto;
+    }
+    a.button {
+      display: block;
+      padding: 15px;
+      background-color: #ffd180;
+      color: #4e342e;
+      text-decoration: none;
+      border-radius: 10px;
+      font-weight: bold;
+      transition: background-color 0.3s;
+    }
+    a.button:hover {
+      background-color: #ffcc80;
+    }
+  </style>
+</head>
+<body>
+  <h1>🛠 관리자 메뉴</h1>
+  <div class="button-container">
+    <a class="button" href="/admin/users">👥 사용자 등록/삭제</a>
+    <a class="button" href="/admin/orders">📋 전체 주문 이력</a>
+    <a class="button" href="/admin">📦 상품 등록/삭제</a>
+  </div>
+</body>
+</html>
