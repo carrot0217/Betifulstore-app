@@ -1,14 +1,80 @@
 <!DOCTYPE html>
-<html>
-<head><title>상품 수정</title></head>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>🛠️ 상품 수정</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #fefaf5;
+      color: #333;
+      padding: 20px;
+    }
+    h1 {
+      color: #5a4031;
+    }
+    .form-section {
+      background: #fff7ec;
+      padding: 20px;
+      border-radius: 12px;
+      max-width: 500px;
+      margin: auto;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+    }
+    label {
+      display: block;
+      margin: 15px 0 5px;
+      font-weight: bold;
+    }
+    input, textarea {
+      width: 100%;
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      box-sizing: border-box;
+    }
+    button {
+      margin-top: 20px;
+      background-color: #ffe4b5;
+      color: #4e342e;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #ffddb0;
+    }
+    a {
+      display: block;
+      margin-top: 30px;
+      text-align: center;
+      color: #888;
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
 <body>
-  <h1>상품 수정</h1>
-  <form method="post">
-    이름: <input type="text" name="name" value="{{ item.name }}" required><br>
-    설명: <input type="text" name="description" value="{{ item.description }}" required><br>
-    재고 수량: <input type="number" name="stock" value="{{ item.stock }}" required><br>
-    <button type="submit">수정 완료</button>
-  </form>
-  <a href="/admin">← 돌아가기</a>
+  <h1>🛠️ 상품 수정</h1>
+  <div class="form-section">
+    <form method="POST">
+      <label for="name">상품명:</label>
+      <input type="text" id="name" name="name" value="{{ item.name }}" required>
+
+      <label for="description">설명:</label>
+      <textarea id="description" name="description" rows="4" required>{{ item.description }}</textarea>
+
+      <label for="stock">수량:</label>
+      <input type="number" id="stock" name="stock" min="0" value="{{ item.stock }}" required>
+
+      <button type="submit">저장</button>
+    </form>
+  </div>
+  <a href="/admin">← 관리자 페이지로 돌아가기</a>
 </body>
 </html>
