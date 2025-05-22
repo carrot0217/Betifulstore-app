@@ -2,116 +2,124 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <title>📋 전체 주문 이력 (관리자)</title>
+  <title>📦 전체 주문 이력</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
     body {
       font-family: 'Segoe UI', sans-serif;
       background-color: #fefaf5;
-      margin: 0;
-      padding: 20px;
+      margin: 20px;
       color: #333;
     }
+
     h1 {
       color: #5a4031;
+      text-align: center;
     }
+
+    .filter-form {
+      background: #fff7ec;
+      padding: 15px;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      justify-content: center;
+    }
+
+    select, button {
+      padding: 8px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      background-color: #fffaf0;
+    }
+
+    button {
+      background-color: #ffd180;
+      color: #4e342e;
+      border: none;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    button:hover {
+      background-color: #ffcc80;
+    }
+
     table {
       width: 100%;
       border-collapse: collapse;
-      margin-top: 20px;
-      background-color: #fffaf0;
-      border-radius: 10px;
-      overflow: hidden;
+      background: #fffefb;
     }
+
     th, td {
-      padding: 12px 15px;
-      border-bottom: 1px solid #ddd;
+      border: 1px solid #ddd;
+      padding: 10px;
       text-align: center;
     }
+
     th {
-      background-color: #ffe4b5;
-      color: #4b3832;
-    }
-    tr:nth-child(even) {
-      background-color: #fff5e1;
-    }
-    tr:hover {
-      background-color: #ffe8cc;
-    }
-    .status {
-      font-weight: bold;
-      padding: 4px 8px;
-      border-radius: 6px;
-      display: inline-block;
-    }
-    .status.처리중 {
-      background-color: #fff3cd;
-      color: #856404;
-    }
-    .status.완료 {
-      background-color: #d4edda;
-      color: #155724;
-    }
-    .status.보류 {
-      background-color: #f8d7da;
-      color: #721c24;
-    }
-    .footer-link {
-      display: block;
-      margin-top: 30px;
-      text-align: center;
-      font-size: 0.9em;
-      color: #888;
-    }
-    a {
-      text-decoration: none;
+      background-color: #ffecd2;
       color: #5a4031;
     }
+
+    tr:nth-child(even) {
+      background-color: #fffaf0;
+    }
+
+    a {
+      display: inline-block;
+      margin-top: 20px;
+      text-decoration: none;
+      color: #6c5ce7;
+      font-weight: bold;
+    }
+
     a:hover {
       text-decoration: underline;
-    }
-    @media (max-width: 600px) {
-      body {
-        padding: 10px;
-      }
-      table, th, td {
-        font-size: 14px;
-      }
     }
   </style>
 </head>
 <body>
-  <h1>📋 전체 주문 이력 (관리자)</h1>
-  {% if orders %}
-    <table>
-      <thead>
+  <h1>📦 전체 주문 이력</h1>
+
+  <form method="post" class="filter-form">
+    <label for="store">매장 선택:</label>
+    <select name="store" id="store">
+      <option value="">전체</option>
+      {% for store in store_names %}
+        <option value="{{ store }}" {% if store == selected_store %}selected{% endif %}>{{ store }}</option>
+      {% endfor %}
+    </select>
+    <button type="submit">조회</button>
+  </form>
+
+  <table>
+    <thead>
+      <tr>
+        <th>매장</th>
+        <th>상품명</th>
+        <th>수량</th>
+        <th>신청일</th>
+        <th>요청일</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for order in orders %}
         <tr>
-          <th>매장명</th>
-          <th>상품명</th>
-          <th>수량</th>
-          <th>신청일</th>
-          <th>희망 입고일</th>
-          <th>상태</th>
+          <td>{{ order.store }}</td>
+          <td>{{ order.item }}</td>
+          <td>{{ order.quantity }}</td>
+          <td>{{ order.date }}</td>
+          <td>{{ order.wish_date }}</td>
         </tr>
-      </thead>
-      <tbody>
-        {% for order in orders %}
-          <tr>
-            <td>{{ order.store }}</td>
-            <td>{{ order.item }}</td>
-            <td>{{ order.quantity }}</td>
-            <td>{{ order.date }}</td>
-            <td>{{ order.wish_date }}</td>
-            <td>
-              <span class="status {{ order.status }}">{{ order.status }}</span>
-            </td>
-          </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  {% else %}
-    <p>주문 이력이 없습니다.</p>
-  {% endif %}
-  <a class="footer-link" href="/admin/dashboard">← 관리자 대시보드로 돌아가기</a>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <a href="/admin/home">← 관리자 홈</a>
 </body>
 </html>
