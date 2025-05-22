@@ -63,6 +63,9 @@
       border-radius: 10px;
       padding: 10px;
     }
+    .download-btn {
+      margin-bottom: 30px;
+    }
     @media (max-width: 600px) {
       .stats-box {
         flex-direction: column;
@@ -102,6 +105,15 @@
         {% endfor %}
       </select>
     </label>
+  </form>
+
+  <!-- ✅ 엑셀 다운로드 버튼 -->
+  <form action="/admin/dashboard/download" method="get" class="download-btn">
+    <input type="hidden" name="start" value="{{ start_date }}">
+    <input type="hidden" name="end" value="{{ end_date }}">
+    <input type="hidden" name="store" value="{{ selected_store }}">
+    <input type="hidden" name="item" value="{{ selected_item }}">
+    <button type="submit">📥 엑셀 다운로드</button>
   </form>
 
   <!-- 통계 요약 -->
