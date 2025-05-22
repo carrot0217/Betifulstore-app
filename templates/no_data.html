@@ -1,1 +1,54 @@
-
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>❌ 다운로드 실패</title>
+  <style>
+    body {
+      background-color: #fffaf0;
+      font-family: 'Segoe UI', sans-serif;
+      color: #333;
+      padding: 50px;
+      text-align: center;
+    }
+    .card {
+      display: inline-block;
+      padding: 30px;
+      background-color: #ffe8e8;
+      border: 1px solid #ffaaaa;
+      border-radius: 10px;
+      box-shadow: 2px 2px 10px rgba(0,0,0,0.05);
+    }
+    h1 {
+      color: #d63031;
+      margin-bottom: 20px;
+    }
+    p {
+      margin: 10px 0;
+      font-size: 16px;
+    }
+    a {
+      display: inline-block;
+      margin-top: 20px;
+      text-decoration: none;
+      color: #5a4031;
+      background: #ffd180;
+      padding: 10px 20px;
+      border-radius: 8px;
+    }
+    a:hover {
+      background: #ffcc80;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>❌ 다운로드할 데이터가 없습니다.</h1>
+    <p>선택한 조건에 해당하는 주문 데이터가 없습니다.</p>
+    <p><strong>기간:</strong> {{ start }} ~ {{ end }}</p>
+    {% if store %}<p><strong>매장:</strong> {{ store }}</p>{% endif %}
+    {% if item %}<p><strong>상품:</strong> {{ item }}</p>{% endif %}
+    <a href="{{ url_for('admin_dashboard') }}">← 대시보드로 돌아가기</a>
+  </div>
+</body>
+</html>
