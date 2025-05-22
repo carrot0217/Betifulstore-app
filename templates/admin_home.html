@@ -9,8 +9,9 @@
       font-family: 'Segoe UI', sans-serif;
       background-color: #fefaf5;
       color: #333;
-      text-align: center;
+      margin: 0;
       padding: 40px;
+      text-align: center;
     }
     h1 {
       color: #5a4031;
@@ -19,18 +20,21 @@
     .button-container {
       display: flex;
       flex-direction: column;
+      align-items: center;
       gap: 20px;
-      max-width: 300px;
-      margin: 0 auto;
+      max-width: 400px;
+      margin: auto;
     }
     a.button {
       display: block;
-      padding: 15px;
       background-color: #ffd180;
       color: #4e342e;
       text-decoration: none;
+      padding: 15px 20px;
       border-radius: 10px;
       font-weight: bold;
+      width: 100%;
+      box-shadow: 2px 2px 5px rgba(0,0,0,0.05);
       transition: background-color 0.3s;
     }
     a.button:hover {
@@ -39,10 +43,10 @@
   </style>
 </head>
 <body>
-  <h1>🛠 관리자 메뉴</h1>
+  <h1>🛠 관리자 홈</h1>
   <div class="button-container">
     <a class="button" href="/admin/users">👥 사용자 등록/삭제</a>
-    <a class="button" href="/admin/orders">📋 전체 주문 이력</a>
+    <a class="button" href="/admin/orders">📄 전체 주문 이력 보기</a>
     <a class="button" href="/admin">📦 상품 등록/삭제</a>
   </div>
 </body>
