@@ -48,12 +48,11 @@
   </div>
 
   <div class="chart-container">
-  <canvas id="storeChart" height="60"></canvas>
-</div>
-<div class="chart-container">
-  <canvas id="itemChart" height="60"></canvas>
-</div>
-
+    <canvas id="storeChart" height="60"></canvas>
+  </div>
+  <div class="chart-container">
+    <canvas id="itemChart" height="60"></canvas>
+  </div>
 
   {% if top_items %}
   <div style="margin:30px 0;">
@@ -69,28 +68,45 @@
   {% endif %}
 
   <script>
-    // Chart 데이터 주입
-    const labels = {{ recent_7_days|tojson }};
-    const data = {
-      labels: labels,
-      datasets: [{
-        label: '일별 주문 건수',
-        data: {{ daily_data|tojson }},
-        backgroundColor: '#ffcc80'
-      }]
-    };
-
-    const config = {
+    // 매장별 비교 차트
+    const storeNames = {{ store_names|tojson }};
+    const storeValues = {{ store_values|tojson }};
+    new Chart(document.getElementById('storeChart'), {
       type: 'bar',
-      data: data,
+      data: {
+        labels: storeNames,
+        datasets: [{
+          label: '매장별 신청 수량',
+          data: storeValues,
+          backgroundColor: '#b2dfdb'
+        }]
+      },
       options: {
         responsive: true,
         plugins: { legend: { display: false } },
-        scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
+        scales: { y: { beginAtZero: true } }
       }
-    };
+    });
 
-    new Chart(document.getElementById('orderChart'), config);
+    // 상품별 비교 차트
+    const itemNames = {{ item_names|tojson }};
+    const itemValues = {{ item_values|tojson }};
+    new Chart(document.getElementById('itemChart'), {
+      type: 'bar',
+      data: {
+        labels: itemNames,
+        datasets: [{
+          label: '상품별 신청 수량',
+          data: itemValues,
+          backgroundColor: '#ffd180'
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { display: false } },
+        scales: { y: { beginAtZero: true } }
+      }
+    });
   </script>
 </body>
 </html>
