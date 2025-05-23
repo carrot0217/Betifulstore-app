@@ -128,35 +128,43 @@ def manage_items():
 def add_item():
     if session.get('role') != 'admin':
         return redirect(url_for('login'))
-    name = request.form['name']
-    description = request.form['description']
-    stock = request.form['stock']
-    image_file = request.files.get('image')
-    image_filename = ''
 
-    # 이미지 파일 저장
-    if image_file and allowed_file(image_file.filename):
-        image_filename = secure_filename(image_file.filename)
-        save_path = os.path.join(app.config['UPLOAD_FOLDER'], image_filename)
-        # 파일명 중복 방지
-        count = 1
-        orig_name, ext = os.path.splitext(image_filename)
-        while os.path.exists(save_path):
-            image_filename = f"{orig_name}_{count}{ext}"
+    try:
+        name = request.form['name']
+        description = request.form.get('description', '')
+        stock = request.form.get('stock', '0')
+        image_file = request.files.get('image')
+        image_filename = ''
+
+        # 이미지가 있는 경우에만 저장
+        if image_file and image_file.filename != '':
+            image_filename = secure_filename(image_file.filename)
             save_path = os.path.join(app.config['UPLOAD_FOLDER'], image_filename)
-            count += 1
-        image_file.save(save_path)
 
-    # 상품 CSV 저장
-    items = load_csv(ITEM_FILE)
-    items.append({
-        'name': name,
-        'description': description,
-        'stock': stock,
-        'image': image_filename
-    })
-    save_csv(ITEM_FILE, items, ['name', 'description', 'stock', 'image'])
-    return redirect(url_for('manage_items'))
+            # 파일명 중복 방지
+            count = 1
+            orig_name, ext = os.path.splitext(image_filename)
+            while os.path.exists(save_path):
+                image_filename = f"{orig_name}_{count}{ext}"
+                save_path = os.path.join(app.config['UPLOAD_FOLDER'], image_filename)
+                count += 1
+
+            image_file.save(save_path)
+
+        # 기존 데이터 불러오고 추가
+        items = load_csv(ITEM_FILE)
+        items.append({
+            'name': name,
+            'description': description,
+            'stock': stock,
+            'image': image_filename
+        })
+        save_csv(ITEM_FILE, items, ['name', 'description', 'stock', 'image'])
+
+        return redirect(url_for('manage_items'))
+
+    except Exception as e:
+        return f"❌ 등록 중 오류가 발생했습니다: {str(e)}"
 
 @app.route('/admin/items/delete', methods=['POST'])
 def delete_item():
