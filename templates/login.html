@@ -26,6 +26,7 @@
       margin-top: 10px;
       border-radius: 6px;
       border: 1px solid #ccc;
+      box-sizing: border-box;
     }
     button {
       background-color: #ffdebd;
@@ -37,9 +38,18 @@
     button:hover {
       background-color: #ffcfa0;
     }
-    label {
+    .remember-container {
+      display: flex;
+      align-items: center;
+      margin-top: 10px;
+    }
+    .remember-container input[type="checkbox"] {
+      margin-right: 8px;
+    }
+    .remember-container label {
       font-size: 0.9em;
       color: #555;
+      margin: 0;
     }
   </style>
 </head>
@@ -49,13 +59,15 @@
     <form method="POST" onsubmit="handleRememberMe()">
       <input type="text" name="admin_id" id="admin_id" placeholder="ID 입력 (기본: admin)" required>
       <input type="password" name="password" placeholder="비밀번호 입력" required>
-      <label><input type="checkbox" id="rememberMe"> 아이디 저장</label>
+      <div class="remember-container">
+        <input type="checkbox" id="rememberMe">
+        <label for="rememberMe">아이디 저장</label>
+      </div>
       <button type="submit">로그인</button>
     </form>
   </div>
 
   <script>
-    // 쿠키에서 admin_id 불러오기
     window.onload = function() {
       const savedId = getCookie("admin_id");
       if (savedId) {
