@@ -4,19 +4,14 @@ import pandas as pd
 import io, os
 
 from utils.file_handler import load_csv, save_csv, append_csv
-import os
 from werkzeug.utils import secure_filename
+
+app = Flask(__name__)
+app.secret_key = 'your_secret_key'
 
 UPLOAD_FOLDER = 'static/uploads'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-
-def allowed_file(filename):
-    return '.' in filename and \
-           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-
-app = Flask(__name__)
-app.secret_key = 'your_secret_key'
 
 DATA_FOLDER = 'data'
 USER_FILE = os.path.join(DATA_FOLDER, 'users.csv')
