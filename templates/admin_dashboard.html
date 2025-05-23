@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>📊 통계 대시보드</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #fffaf3;
+      text-align: center;
+      padding: 30px;
+    }
+    h1 {
+      color: #5a4031;
+      margin-bottom: 20px;
+    }
+    .summary {
+      margin-bottom: 30px;
+      font-size: 1.1em;
+      color: #4e342e;
+    }
+    table {
+      margin: auto;
+      border-collapse: collapse;
+      width: 90%;
+      max-width: 600px;
+      background-color: #fff;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      border-radius: 12px;
+      overflow: hidden;
+      margin-top: 30px;
+    }
+    th, td {
+      padding: 12px;
+      border-bottom: 1px solid #eee;
+    }
+    th {
+      background-color: #ffe0b2;
+      color: #4e342e;
+    }
+    tr:hover {
+      background-color: #fff3e0;
+    }
+    a.download {
+      display: inline-block;
+      margin-top: 20px;
+      padding: 10px 20px;
+      background-color: #ffcc80;
+      border-radius: 8px;
+      font-weight: bold;
+      color: #4e342e;
+      text-decoration: none;
+    }
+    a.download:hover {
+      background-color: #ffb74d;
+    }
+  </style>
+</head>
+<body>
+  <h1>📊 통계 대시보드</h1>
+
+  <div class="summary">
+    총 주문 수: <strong>{{ total_orders }}</strong>건<br>
+    총 주문 수량: <strong>{{ total_quantity }}</strong>개
+  </div>
+
+  {% if top_items %}
+  <table>
+    <tr>
+      <th>상품명</th>
+      <th>주문 수량</th>
+    </tr>
+    {% for item, qty in top_items %}
+    <tr>
+      <td>{{ item }}</td>
+      <td>{{ qty }}</td>
+    </tr>
+    {% endfor %}
+  </table>
+  {% else %}
+  <p>📭 주문 데이터가 없습니다.</p>
+  {% endif %}
+
+  <a class="download" href="/admin/dashboard/download">📥 엑셀 다운로드</a>
+</body>
+</html>
