@@ -1,1 +1,68 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>📦 상품 등록 / 삭제</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #fffaf3;
+      padding: 40px 20px;
+      color: #333;
+    }
+    h1 {
+      color: #5a4031;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    form {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    input[type="text"] {
+      padding: 10px;
+      margin-right: 10px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+    }
+    button {
+      padding: 10px 20px;
+      background-color: #ffe0b2;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      color: #4e342e;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #ffcc80;
+    }
+    ul {
+      max-width: 400px;
+      margin: auto;
+      list-style: none;
+      padding: 0;
+    }
+    li {
+      padding: 10px;
+      background-color: #fff;
+      margin-bottom: 10px;
+      border-radius: 10px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+  </style>
+</head>
+<body>
+  <h1>📦 상품 등록 / 삭제</h1>
+  <form method="POST" action="/admin/items/add">
+    <input type="text" name="item_name" placeholder="새 상품 이름 입력" required>
+    <button type="submit">등록</button>
+  </form>
 
+  <ul>
+    {% for item in items %}
+      <li>{{ item }}</li>
+    {% endfor %}
+  </ul>
+</body>
+</html>
