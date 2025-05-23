@@ -70,12 +70,12 @@
   <h1>📦 상품 등록 및 삭제</h1>
 
   <form method="POST" action="/admin/items/add" enctype="multipart/form-data">
-  <input type="text" name="name" placeholder="상품명" required>
-  <input type="text" name="description" placeholder="설명">
-  <input type="number" name="stock" placeholder="재고수량" required>
-  <input type="file" name="image" accept="image/*">
-  <button type="submit">등록</button>
-</form>
+    <input type="text" name="name" placeholder="상품명" required>
+    <input type="text" name="description" placeholder="설명">
+    <input type="number" name="stock" placeholder="재고수량" required>
+    <input type="file" name="image" accept="image/*">
+    <button type="submit">등록</button>
+  </form>
 
   {% if items %}
   <table>
@@ -91,6 +91,13 @@
       <td>{{ item.name }}</td>
       <td>{{ item.description }}</td>
       <td>{{ item.stock }}</td>
+      <td>
+        {% if item.image %}
+          <img src="{{ url_for('static', filename='uploads/' ~ item.image) }}" alt="이미지" width="60">
+        {% else %}
+          없음
+        {% endif %}
+      </td>
       <td>
         <form method="POST" action="/admin/items/delete" style="margin:0;">
           <input type="hidden" name="item_name" value="{{ item.name }}">
