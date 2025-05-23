@@ -256,3 +256,35 @@ if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
     os.makedirs(UPLOAD_FOLDER, exist_ok=True)
     app.run(host='0.0.0.0', port=port)
+
+
+# 상품 등록/삭제 기능
+items = []
+
+@app.route('/admin/items')
+def manage_items():
+    if 'logged_in' not in session:
+        return redirect(url_for('login'))
+    return render_template('admin_items.html', items=items)
+
+@app.route('/admin/items/add', methods=['POST'])
+def add_item():
+    if 'logged_in' not in session:
+        return redirect(url_for('login'))
+
+    item_name = request.form.get('item_name')
+    stock = int(request.form.get('stock', 0))
+
+    if item_name:
+        items.append({'name': item_name, 'stock': stock})
+    return redirect(url_for('manage_items'))
+
+@app.route('/admin/items/delete', methods=['POST'])
+def delete_item():
+    if 'logged_in' not in session:
+        return redirect(url_for('login'))
+
+    item_name = request.form.get('item_name')
+    global items
+    items = [item for item in items if item['name'] != item_name]
+    return redirect(url_for('manage_items'))
