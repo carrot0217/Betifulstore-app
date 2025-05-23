@@ -261,16 +261,22 @@ if __name__ == '__main__':
 # 상품 등록/삭제 기능
 items = []
 
-@app.route('/admin/items')
-def manage_items():
-    if 'logged_in' not in session:
-        return redirect(url_for('login'))
-    return render_template('admin_items.html', items=items)
-
 @app.route('/admin/items/add', methods=['POST'])
 def add_item():
     if 'logged_in' not in session:
         return redirect(url_for('login'))
+
+    item_name = request.form.get('name')
+    description = request.form.get('description')
+    stock = int(request.form.get('stock', 0))
+    items.append({'name': item_name, 'description': description, 'stock': stock})
+    return redirect(url_for('admin'))
+
+@app.route('/admin', methods=['GET'])
+def admin():
+    if 'logged_in' not in session:
+        return redirect(url_for('login'))
+    return render_template('admin.html', inventory=items)
 
     item_name = request.form.get('item_name')
     stock = int(request.form.get('stock', 0))
