@@ -83,4 +83,6 @@ def logout():
 # ------------------- 실행 -------------------
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    port = int(os.environ.get('PORT', 5000))  # Render 환경에서는 PORT 사용
+    os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+    app.run(host='0.0.0.0', port=port)
