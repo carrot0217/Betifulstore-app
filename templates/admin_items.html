@@ -3,6 +3,61 @@
 <head>
   <meta charset="UTF-8">
   <title>📦 상품 등록 / 삭제</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #fffaf3;
+      padding: 40px 20px;
+      color: #333;
+    }
+    h1 {
+      color: #5a4031;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    form {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    input[type="text"], input[type="number"] {
+      padding: 10px;
+      margin-right: 10px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+    }
+    button {
+      padding: 10px 20px;
+      background-color: #ffe0b2;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      color: #4e342e;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #ffcc80;
+    }
+    ul {
+      max-width: 500px;
+      margin: auto;
+      list-style: none;
+      padding: 0;
+    }
+    li {
+      padding: 10px;
+      background-color: #fff;
+      margin-bottom: 10px;
+      border-radius: 10px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .item-info {
+      flex-grow: 1;
+      text-align: left;
+    }
+  </style>
 </head>
 <body>
   <h1>📦 상품 등록 / 삭제</h1>
@@ -12,10 +67,15 @@
     <button type="submit">등록</button>
   </form>
 
-  <h2>상품 목록</h2>
   <ul>
     {% for item in items %}
-      <li>{{ item.name }} - 재고: {{ item.stock }}</li>
+      <li>
+        <span class="item-info">{{ item.name }} - 재고: {{ item.stock }}</span>
+        <form method="POST" action="/admin/items/delete" style="margin:0;">
+          <input type="hidden" name="item_name" value="{{ item.name }}">
+          <button type="submit">삭제</button>
+        </form>
+      </li>
     {% endfor %}
   </ul>
 </body>
