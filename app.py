@@ -183,16 +183,33 @@ def delete_item():
 def admin_dashboard():
     if session.get('role') != 'admin':
         return redirect(url_for('login'))
-    orders = load_csv(ORDER_FILE)
-    total_quantity = sum(int(o['quantity']) for o in orders)
+    # ...기존 필터링 코드...
+
+    # 기존 orders에서 store별, item별 통계 계산
+    store_counts = {}
     item_counts = {}
-    for o in orders:
-        item_counts[o['item']] = item_counts.get(o['item'], 0) + int(o['quantity'])
-    top_items = sorted(item_counts.items(), key=lambda x: x[1], reverse=True)[:5]
+    for o in filtered_orders:
+        store = o['store']
+        item = o['item']
+        qty = int(o['quantity'])
+        store_counts[store] = store_counts.get(store, 0) + qty
+        item_counts[item] = item_counts.get(item, 0) + qty
+
+    # store, item 리스트와 각각의 수량값 추출
+    store_names = list(store_counts.keys())
+    store_values = list(store_counts.values())
+    item_names = list(item_counts.keys())
+    item_values = list(item_counts.values())
+
+    # 기존 context에 추가
     return render_template('admin_dashboard.html',
-                           total_orders=len(orders),
-                           total_quantity=total_quantity,
-                           top_items=top_items)
+        # 기존 변수들 ...
+        store_names=store_names,
+        store_values=store_values,
+        item_names=item_names,
+        item_values=item_values,
+        # 나머지 기존 context
+        ...)
 
 @app.route('/admin/dashboard/download')
 def download_dashboard_data():
