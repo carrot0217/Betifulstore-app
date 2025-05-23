@@ -4,6 +4,16 @@ import pandas as pd
 import io, os
 
 from utils.file_handler import load_csv, save_csv, append_csv
+import os
+from werkzeug.utils import secure_filename
+
+UPLOAD_FOLDER = 'static/uploads'
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
@@ -120,14 +130,34 @@ def manage_items():
 def add_item():
     if session.get('role') != 'admin':
         return redirect(url_for('login'))
-    item = {
-        'name': request.form['name'],
-        'description': request.form['description'],
-        'stock': request.form['stock']
-    }
+    name = request.form['name']
+    description = request.form['description']
+    stock = request.form['stock']
+    image_file = request.files.get('image')
+    image_filename = ''
+
+    # 이미지 파일 저장
+    if image_file and allowed_file(image_file.filename):
+        image_filename = secure_filename(image_file.filename)
+        save_path = os.path.join(app.config['UPLOAD_FOLDER'], image_filename)
+        # 파일명 중복 방지
+        count = 1
+        orig_name, ext = os.path.splitext(image_filename)
+        while os.path.exists(save_path):
+            image_filename = f"{orig_name}_{count}{ext}"
+            save_path = os.path.join(app.config['UPLOAD_FOLDER'], image_filename)
+            count += 1
+        image_file.save(save_path)
+
+    # 상품 CSV 저장
     items = load_csv(ITEM_FILE)
-    items.append(item)
-    save_csv(ITEM_FILE, items, ['name', 'description', 'stock'])
+    items.append({
+        'name': name,
+        'description': description,
+        'stock': stock,
+        'image': image_filename
+    })
+    save_csv(ITEM_FILE, items, ['name', 'description', 'stock', 'image'])
     return redirect(url_for('manage_items'))
 
 @app.route('/admin/items/delete', methods=['POST'])
@@ -136,8 +166,17 @@ def delete_item():
         return redirect(url_for('login'))
     name = request.form['item_name']
     items = load_csv(ITEM_FILE)
-    items = [item for item in items if item['name'] != name]
-    save_csv(ITEM_FILE, items, ['name', 'description', 'stock'])
+    new_items = []
+    for item in items:
+        if item['name'] == name:
+            # 이미지 삭제
+            if item.get('image'):
+                image_path = os.path.join(app.config['UPLOAD_FOLDER'], item['image'])
+                if os.path.exists(image_path):
+                    os.remove(image_path)
+            continue
+        new_items.append(item)
+    save_csv(ITEM_FILE, new_items, ['name', 'description', 'stock', 'image'])
     return redirect(url_for('manage_items'))
 
 @app.route('/admin/dashboard')
