@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <title>🔐 로그인</title>
+  <title>🔑 관리자 로그인</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
     body {
@@ -13,6 +13,12 @@
     }
     h1 {
       color: #5a4031;
+      font-size: 2.2em;
+      margin-bottom: 15px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 12px;
     }
     form {
       display: inline-block;
@@ -21,6 +27,7 @@
       border-radius: 12px;
       box-shadow: 0 4px 10px rgba(0,0,0,0.1);
       margin-top: 30px;
+      min-width: 320px;
     }
     input {
       padding: 10px;
@@ -39,6 +46,7 @@
       font-weight: bold;
       color: #4e342e;
       cursor: pointer;
+      margin-top: 10px;
     }
     button:hover {
       background-color: #ffb74d;
@@ -47,17 +55,47 @@
       color: red;
       margin-top: 15px;
     }
+    .remember-box {
+      font-size: 0.98em;
+      margin-bottom: 10px;
+      text-align: left;
+      margin-left: 15px;
+    }
   </style>
 </head>
 <body>
-  <h1>🔐 로그인</h1>
-  <form method="POST">
-    <input type="text" name="user_id" placeholder="아이디" required><br>
+  <h1>🔑 관리자 로그인</h1>
+  <form method="POST" autocomplete="off" onsubmit="saveUserId()">
+    <input type="text" name="user_id" id="user_id" placeholder="아이디" required><br>
     <input type="password" name="password" placeholder="비밀번호" required><br>
+    <div class="remember-box">
+      <input type="checkbox" id="remember_id">
+      <label for="remember_id">아이디 저장</label>
+    </div>
     <button type="submit">로그인</button>
     {% if message %}
     <div class="message">{{ message }}</div>
     {% endif %}
   </form>
+  <script>
+    // 로그인 페이지 로드 시 localStorage에서 아이디 불러오기
+    window.onload = function() {
+      var savedId = localStorage.getItem('adminUserId');
+      if(savedId){
+        document.getElementById('user_id').value = savedId;
+        document.getElementById('remember_id').checked = true;
+      }
+    }
+    // 로그인 시 아이디 저장/삭제
+    function saveUserId() {
+      var id = document.getElementById('user_id').value;
+      var checked = document.getElementById('remember_id').checked;
+      if(checked) {
+        localStorage.setItem('adminUserId', id);
+      } else {
+        localStorage.removeItem('adminUserId');
+      }
+    }
+  </script>
 </body>
 </html>
