@@ -91,7 +91,7 @@ def place_order():
             current_stock = int(item['stock'])
             if current_stock >= quantity:
                 item['stock'] = str(current_stock - quantity)
-                save_csv(ITEM_FILE, items, ['name', 'description', 'stock'])
+                save_csv(ITEM_FILE, items, ['name', 'description', 'stock', 'image'])
                 append_csv(ORDER_FILE, {
                     'store': store,
                     'item': item_name,
