@@ -70,12 +70,13 @@
   <h1>📦 상품 등록 및 삭제</h1>
 
   <form method="POST" action="/admin/items/add" enctype="multipart/form-data">
-    <input type="text" name="name" placeholder="상품명" required>
-    <input type="text" name="description" placeholder="설명">
-    <input type="number" name="stock" placeholder="재고수량" required>
-    <input type="file" name="image" accept="image/*">
-    <button type="submit">등록</button>
-  </form>
+  <input type="text" name="name" placeholder="상품명" required>
+  <input type="text" name="description" placeholder="설명">
+  <input type="number" name="stock" placeholder="재고수량" required>
+  <input type="file" name="image" accept="image/*">
+  <button type="submit">등록</button>
+</form>
+
 
   {% if items %}
   <table>
