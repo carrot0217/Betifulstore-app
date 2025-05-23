@@ -183,9 +183,42 @@ def delete_item():
 def admin_dashboard():
     if session.get('role') != 'admin':
         return redirect(url_for('login'))
-    # ...기존 필터링 코드...
 
-    # 기존 orders에서 store별, item별 통계 계산
+    # --- 기간/매장 필터링 ---
+    start_date = request.args.get('start')
+    end_date = request.args.get('end')
+    selected_store = request.args.get('store')
+
+    orders = load_csv(ORDER_FILE)
+    filtered_orders = orders
+
+    # 필터: 기간(날짜)
+    if start_date and end_date:
+        try:
+            start_dt = datetime.strptime(start_date, "%Y-%m-%d")
+            end_dt = datetime.strptime(end_date, "%Y-%m-%d")
+            filtered_orders = [o for o in filtered_orders if o.get('wish_date') and start_dt <= datetime.strptime(o['wish_date'], "%Y-%m-%d") <= end_dt]
+        except:
+            pass
+
+    # 필터: 매장
+    if selected_store:
+        filtered_orders = [o for o in filtered_orders if o['store'] == selected_store]
+
+    # --- 통계 데이터 생성 ---
+    total_orders = len(filtered_orders)
+    total_quantity = sum(int(o['quantity']) for o in filtered_orders) if filtered_orders else 0
+
+    # 최근 7일 날짜 및 일별 주문건수
+    recent_7_days = [(datetime.now() - timedelta(days=i)).strftime('%Y-%m-%d') for i in range(6, -1, -1)]
+    daily_counts = {d: 0 for d in recent_7_days}
+    for o in filtered_orders:
+        date = o.get('wish_date')
+        if date in daily_counts:
+            daily_counts[date] += 1
+    daily_data = [daily_counts[d] for d in recent_7_days]
+
+    # store별/상품별 통계
     store_counts = {}
     item_counts = {}
     for o in filtered_orders:
@@ -195,21 +228,35 @@ def admin_dashboard():
         store_counts[store] = store_counts.get(store, 0) + qty
         item_counts[item] = item_counts.get(item, 0) + qty
 
-    # store, item 리스트와 각각의 수량값 추출
     store_names = list(store_counts.keys())
     store_values = list(store_counts.values())
     item_names = list(item_counts.keys())
     item_values = list(item_counts.values())
 
-    # 기존 context에 추가
+    # TOP 주문 상품 (수량 기준)
+    top_items = sorted(item_counts.items(), key=lambda x: x[1], reverse=True)[:5]
+
+    # 매장/상품 리스트(필터용)
+    store_list = sorted(set(o['store'] for o in orders))
+    item_list = sorted(set(o['item'] for o in orders))
+
     return render_template('admin_dashboard.html',
-        # 기존 변수들 ...
         store_names=store_names,
         store_values=store_values,
         item_names=item_names,
         item_values=item_values,
-        # 나머지 기존 context
-        ...)
+        start_date=start_date or '',
+        end_date=end_date or '',
+        selected_store=selected_store or '',
+        store_list=store_list,
+        item_list=item_list,
+        total_orders=total_orders,
+        total_quantity=total_quantity,
+        recent_7_days=recent_7_days,
+        daily_data=daily_data,
+        top_items=top_items
+    )
+
 
 @app.route('/admin/dashboard/download')
 def download_dashboard_data():
