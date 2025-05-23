@@ -13,6 +13,9 @@ UPLOAD_FOLDER = 'static/uploads'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)   # ← 이 위치!
+
+
 DATA_FOLDER = 'data'
 USER_FILE = os.path.join(DATA_FOLDER, 'users.csv')
 ITEM_FILE = os.path.join(DATA_FOLDER, 'items.csv')
