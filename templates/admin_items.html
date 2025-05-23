@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>📦 상품 관리</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #fffaf3;
+      text-align: center;
+      padding: 30px;
+    }
+    h1 {
+      color: #5a4031;
+      margin-bottom: 20px;
+    }
+    table {
+      margin: auto;
+      border-collapse: collapse;
+      width: 90%;
+      max-width: 800px;
+      background-color: #fff;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: 40px;
+    }
+    th, td {
+      padding: 12px;
+      border-bottom: 1px solid #eee;
+    }
+    th {
+      background-color: #ffe0b2;
+      color: #4e342e;
+    }
+    tr:hover {
+      background-color: #fff3e0;
+    }
+    form {
+      margin: 20px auto;
+      padding: 20px;
+      background-color: #fff8e1;
+      border-radius: 12px;
+      display: inline-block;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    }
+    input {
+      padding: 10px;
+      margin: 5px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      width: 200px;
+    }
+    button {
+      padding: 10px 20px;
+      background-color: #ffcc80;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+      color: #4e342e;
+    }
+    button:hover {
+      background-color: #ffb74d;
+    }
+  </style>
+</head>
+<body>
+  <h1>📦 상품 등록 및 삭제</h1>
+
+  <form method="POST" action="/admin/items/add">
+    <input type="text" name="name" placeholder="상품명" required>
+    <input type="text" name="description" placeholder="설명">
+    <input type="number" name="stock" placeholder="재고수량" required>
+    <button type="submit">등록</button>
+  </form>
+
+  {% if items %}
+  <table>
+    <tr>
+      <th>상품명</th>
+      <th>설명</th>
+      <th>재고</th>
+      <th>삭제</th>
+    </tr>
+    {% for item in items %}
+    <tr>
+      <td>{{ item.name }}</td>
+      <td>{{ item.description }}</td>
+      <td>{{ item.stock }}</td>
+      <td>
+        <form method="POST" action="/admin/items/delete" style="margin:0;">
+          <input type="hidden" name="item_name" value="{{ item.name }}">
+          <button type="submit">삭제</button>
+        </form>
+      </td>
+    </tr>
+    {% endfor %}
+  </table>
+  {% else %}
+  <p>📭 등록된 상품이 없습니다.</p>
+  {% endif %}
+</body>
+</html>
