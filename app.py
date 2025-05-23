@@ -118,7 +118,7 @@ def admin_orders():
     if 'logged_in' not in session:
         return redirect(url_for('login'))
 
-    selected_store = request.form.get('store')
+    selected_store = request.form.get('store') or request.args.get('store')
     filtered_orders = orders
     if selected_store:
         filtered_orders = [o for o in orders if o['store'] == selected_store]
@@ -255,3 +255,4 @@ def wakeup():
 if __name__ == '__main__':
     os.makedirs(UPLOAD_FOLDER, exist_ok=True)
     app.run(host='0.0.0.0', port=10000)
+
