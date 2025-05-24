@@ -180,3 +180,65 @@ def admin_dashboard():
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 10000))
     app.run(host='0.0.0.0', port=port)
+
+@app.route('/admin/dashboard')
+def admin_dashboard():
+    if session.get('role') != 'admin':
+        return redirect(url_for('login'))
+
+    start_date = request.args.get('start')
+    end_date = request.args.get('end')
+    selected_store = request.args.get('store')
+
+    orders = load_csv(ORDER_FILE)
+    filtered_orders = orders
+
+    if start_date and end_date:
+        try:
+            start_dt = datetime.strptime(start_date, "%Y-%m-%d")
+            end_dt = datetime.strptime(end_date, "%Y-%m-%d")
+            filtered_orders = [
+                o for o in orders
+                if o.get('wish_date') and start_dt <= datetime.strptime(o['wish_date'], "%Y-%m-%d") <= end_dt
+            ]
+        except:
+            pass
+
+    if selected_store:
+        filtered_orders = [o for o in filtered_orders if o.get('store') == selected_store]
+
+    total_orders = len(filtered_orders)
+    total_quantity = sum(int(o.get('quantity', 0) or 0) for o in filtered_orders)
+
+    store_counts = {}
+    item_counts = {}
+    for o in filtered_orders:
+        store = o.get('store')
+        item = o.get('item')
+        qty = int(o.get('quantity', 0) or 0)
+        store_counts[store] = store_counts.get(store, 0) + qty
+        item_counts[item] = item_counts.get(item, 0) + qty
+
+    top_items = sorted(item_counts.items(), key=lambda x: x[1], reverse=True)[:5]
+    store_names = list(store_counts.keys())
+    store_values = list(store_counts.values())
+    item_names = list(item_counts.keys())
+    item_values = list(item_counts.values())
+
+    store_list = sorted(set(o.get('store') for o in orders if o.get('store')))
+    item_list = sorted(set(o.get('item') for o in orders if o.get('item')))
+
+    return render_template('admin_dashboard.html',
+        store_names=store_names,
+        store_values=store_values,
+        item_names=item_names,
+        item_values=item_values,
+        start_date=start_date or '',
+        end_date=end_date or '',
+        selected_store=selected_store or '',
+        store_list=store_list,
+        item_list=item_list,
+        total_orders=total_orders,
+        total_quantity=total_quantity,
+        top_items=top_items
+    )
