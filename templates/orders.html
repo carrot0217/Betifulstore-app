@@ -2,48 +2,51 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <title>🧾 나의 주문 이력</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>주문 이력</title>
   <style>
     body {
-      font-family: 'Segoe UI', sans-serif;
       background-color: #fffaf3;
+      font-family: 'Segoe UI', sans-serif;
       text-align: center;
       padding: 40px;
       color: #4e342e;
     }
     h2 {
-      color: #5a4031;
       margin-bottom: 30px;
     }
-    ul {
-      list-style: none;
-      padding: 0;
-      margin: 20px auto;
-      max-width: 500px;
-    }
-    li {
+    table {
+      margin: 0 auto;
+      border-collapse: collapse;
+      width: 90%;
+      max-width: 800px;
       background-color: #fff;
-      margin: 10px 0;
-      padding: 12px 20px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
       border-radius: 10px;
-      box-shadow: 0 3px 8px rgba(0,0,0,0.06);
-      text-align: left;
+      overflow: hidden;
     }
-    p {
-      color: #888;
+    th, td {
+      padding: 14px;
+      border-bottom: 1px solid #eee;
     }
-    a {
-      display: inline-block;
-      margin-top: 30px;
-      padding: 10px 20px;
-      background-color: #ffcc80;
-      border-radius: 8px;
-      text-decoration: none;
-      color: #4e342e;
+    th {
+      background-color: #ffe0b2;
       font-weight: bold;
     }
-    a:hover {
+    tr:hover {
+      background-color: #fff3e0;
+    }
+    .btn {
+      margin-top: 20px;
+      padding: 10px 20px;
+      background-color: #ffcc80;
+      color: #4e342e;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      text-decoration: none;
+      display: inline-block;
+    }
+    .btn:hover {
       background-color: #ffb74d;
     }
   </style>
@@ -52,15 +55,30 @@
   <h2>🧾 나의 주문 이력</h2>
 
   {% if orders %}
-    <ul>
-    {% for order in orders %}
-      <li>{{ order.item }} - {{ order.quantity }}개 ({{ order.wish_date }})</li>
-    {% endfor %}
-    </ul>
+  <table>
+    <thead>
+      <tr>
+        <th>상품명</th>
+        <th>신청 수량</th>
+        <th>입고 희망일</th>
+        <th>신청일</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for order in orders %}
+      <tr>
+        <td>{{ order.item }}</td>
+        <td>{{ order.quantity }}개</td>
+        <td>{{ order.wish_date }}</td>
+        <td>{{ order.date }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
   {% else %}
     <p>📭 주문 이력이 없습니다.</p>
   {% endif %}
 
-  <a href="/user/home">🏠 홈으로</a>
+  <a class="btn" href="/user/home">🏠 홈으로</a>
 </body>
 </html>
