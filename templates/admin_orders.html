@@ -8,73 +8,64 @@
     body {
       font-family: 'Segoe UI', sans-serif;
       background-color: #fffaf3;
+      color: #4e342e;
       text-align: center;
-      padding: 30px;
+      padding: 40px;
     }
     h1 {
       color: #5a4031;
-      margin-bottom: 20px;
+      margin-bottom: 25px;
     }
     .filter-form {
-      margin-bottom: 20px;
-      font-size: 0.95em;
+      margin-bottom: 30px;
+      font-size: 1em;
     }
     input[type="date"], select {
-      padding: 6px 10px;
-      border-radius: 6px;
+      padding: 8px 12px;
+      margin: 0 6px;
       border: 1px solid #ccc;
-      background-color: #ffe0b2;
-      margin: 0 5px;
+      border-radius: 6px;
+      background-color: #fff8e1;
     }
-    button {
-      padding: 8px 18px;
+    button, .download {
+      padding: 10px 20px;
+      margin-left: 8px;
       background-color: #ffcc80;
+      color: #4e342e;
       border: none;
-      border-radius: 6px;
+      border-radius: 8px;
       font-weight: bold;
-      color: #4e342e;
-      cursor: pointer;
-    }
-    button:hover {
-      background-color: #ffb74d;
-    }
-    a.download {
-      display: inline-block;
-      margin-left: 10px;
-      padding: 8px 18px;
-      background-color: #ffcc80;
-      border-radius: 6px;
-      font-weight: bold;
-      color: #4e342e;
       text-decoration: none;
+      cursor: pointer;
+      display: inline-block;
     }
-    a.download:hover {
+    button:hover, .download:hover {
       background-color: #ffb74d;
     }
     table {
-      margin: auto;
-      border-collapse: collapse;
       width: 95%;
       max-width: 1000px;
+      margin: 20px auto;
+      border-collapse: collapse;
       background-color: #fff;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
       border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
       overflow: hidden;
-      margin-top: 20px;
     }
     th, td {
-      padding: 12px;
+      padding: 14px;
       border-bottom: 1px solid #eee;
     }
     th {
       background-color: #ffe0b2;
       color: #4e342e;
+      font-weight: bold;
     }
     tr:hover {
       background-color: #fff3e0;
     }
     .summary {
-      margin-top: 20px;
+      margin-top: 25px;
       font-weight: bold;
       color: #4e342e;
     }
@@ -89,8 +80,7 @@
       ~
       <input type="date" name="end" value="{{ end_date }}">
     </label>
-    <label>
-      매장:
+    <label>매장:
       <select name="store">
         <option value="">전체</option>
         {% for store in store_names %}
@@ -104,26 +94,30 @@
 
   {% if orders %}
   <table>
-    <tr>
-      <th>매장</th>
-      <th>상품명</th>
-      <th>수량</th>
-      <th>희망일</th>
-      <th>신청일</th>
-    </tr>
-    {% for o in orders %}
-    <tr>
-      <td>{{ o.store }}</td>
-      <td>{{ o.item }}</td>
-      <td>{{ o.quantity }}</td>
-      <td>{{ o.wish_date }}</td>
-      <td>{{ o.date }}</td>
-    </tr>
-    {% endfor %}
+    <thead>
+      <tr>
+        <th>매장</th>
+        <th>상품명</th>
+        <th>수량</th>
+        <th>희망일</th>
+        <th>신청일</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for o in orders %}
+      <tr>
+        <td>{{ o.store }}</td>
+        <td>{{ o.item }}</td>
+        <td>{{ o.quantity }}</td>
+        <td>{{ o.wish_date }}</td>
+        <td>{{ o.date }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
   </table>
 
   <div class="summary">
-    총 신청 수량: {{ total_quantity }}개
+    총 신청 수량: <strong>{{ total_quantity }}</strong>개
   </div>
   {% else %}
   <p>📭 주문 이력이 없습니다.</p>
