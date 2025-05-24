@@ -4,104 +4,105 @@
   <meta charset="UTF-8">
   <title>상품 신청</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     body {
       font-family: 'Segoe UI', sans-serif;
       background-color: #fffaf3;
       color: #4e342e;
       text-align: center;
-      padding: 40px;
+      padding: 30px;
     }
-    h2 {
-      font-size: 1.8em;
-      color: #5a4031;
+    h1 {
       margin-bottom: 30px;
+      font-size: 2em;
     }
-    .product-grid {
+    .container {
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
       gap: 20px;
     }
-    .product-card {
+    .card {
       background-color: #fff3e0;
-      padding: 20px;
       border-radius: 16px;
+      padding: 20px;
       width: 240px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      position: relative;
     }
-    .product-card img {
-      width: 200px;
-      height: 150px;
+    .card img {
+      width: 100%;
+      height: 160px;
       object-fit: cover;
       border-radius: 8px;
     }
-    .product-name {
-      margin: 10px 0 4px;
-      font-size: 1.1em;
-      font-weight: bold;
+    .zoom-icon {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      background-color: rgba(255, 255, 255, 0.8);
+      border-radius: 50%;
+      padding: 6px;
+      cursor: pointer;
     }
-    .stock {
-      font-size: 0.95em;
-      margin-bottom: 12px;
-    }
-    form {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-    label {
-      font-size: 0.85em;
-      text-align: left;
-      margin-left: 4px;
-    }
-    input[type="number"], input[type="date"] {
+    input, select {
+      width: 100%;
+      margin: 6px 0;
       padding: 8px;
       border: 1px solid #ccc;
       border-radius: 6px;
-      background-color: #fff;
     }
     button {
-      padding: 10px 18px;
+      padding: 10px;
+      width: 100%;
       background-color: #ffcc80;
-      border: none;
-      border-radius: 6px;
-      font-weight: bold;
       color: #4e342e;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
       cursor: pointer;
     }
     button:hover {
       background-color: #ffb74d;
     }
-    .logout {
-      margin-top: 40px;
-      font-size: 0.95em;
-      color: #4e342e;
+    .footer {
+      margin-top: 30px;
     }
   </style>
 </head>
 <body>
-  <h2>🛒 상품 신청</h2>
-  <div class="product-grid">
+  <h1><i class="fa-solid fa-cart-shopping"></i> 상품 신청</h1>
+  <div class="container">
     {% for item in items %}
-    <div class="product-card">
+    <div class="card">
       <img src="/static/uploads/{{ item.image }}" alt="{{ item.name }}">
-      <div class="product-name">{{ item.name }}</div>
-      <div class="stock">재고: {{ item.stock }}개</div>
+      <div class="zoom-icon" onclick="openImagePopup('{{ url_for('static', filename='uploads/' ~ item.image) }}')">
+        <i class="fa-solid fa-magnifying-glass"></i>
+      </div>
+      <h3>{{ item.name }}</h3>
+      <p>재고: {{ item.stock }}개</p>
       <form method="post" action="/order">
         <input type="hidden" name="item_name" value="{{ item.name }}">
-        <label for="quantity_{{ loop.index }}">신청 수량</label>
-        <input id="quantity_{{ loop.index }}" name="quantity" type="number" required>
-        <label for="date_{{ loop.index }}">입고 희망일</label>
-        <input id="date_{{ loop.index }}" name="wish_date" type="date" required>
+        <label>신청 수량</label>
+        <input name="quantity" type="number" min="1" required>
+        <label>입고 희망일</label>
+        <input name="wish_date" type="date" required>
         <button type="submit">신청</button>
       </form>
     </div>
     {% endfor %}
   </div>
-
-  <div class="logout">
-    🔒 <a href="/logout">로그아웃</a>
+  <div class="footer">
+    <a href="/logout" style="text-decoration:none;color:#4e342e;"><i class="fa-solid fa-lock"></i> 로그아웃</a>
   </div>
+
+  <script>
+    function openImagePopup(imageUrl) {
+      const popup = window.open('', 'ImagePopup', 'width=600,height=600');
+      popup.document.write('<html><head><title>이미지 확대</title></head><body style="margin:0;padding:0;text-align:center;background:#fffaf3;"><img src="' + imageUrl + '" style="max-width:100%;max-height:100%;border-radius:12px;"></body></html>');
+    }
+  </script>
 </body>
 </html>
+
