@@ -107,29 +107,37 @@ def admin_home():
 def admin_orders():
     if session.get('role') != 'admin':
         return redirect(url_for('login'))
+
     start_date = request.args.get('start')
     end_date = request.args.get('end')
     selected_store = request.args.get('store')
+
     orders = load_csv(ORDER_FILE)
-    filtered_orders = orders
-    if start_date and end_date:
+    filtered_orders = []
+
+    for o in orders:
         try:
-            sdt = datetime.strptime(start_date, "%Y-%m-%d")
-            edt = datetime.strptime(end_date, "%Y-%m-%d")
-            filtered_orders = [
-                o for o in filtered_orders
-                if 'date' in o and o['date'] and sdt <= datetime.strptime(o['date'], "%Y-%m-%d") <= edt
-            ]
+            if start_date and end_date:
+                order_date = datetime.strptime(o.get('date', ''), "%Y-%m-%d")
+                if not (datetime.strptime(start_date, "%Y-%m-%d") <= order_date <= datetime.strptime(end_date, "%Y-%m-%d")):
+                    continue
+            if selected_store and o.get('store') != selected_store:
+                continue
+            filtered_orders.append(o)
         except:
-            pass
-    if selected_store:
-        filtered_orders = [o for o in filtered_orders if o['store'] == selected_store]
-    total_quantity = sum(int(o['quantity']) for o in filtered_orders) if filtered_orders else 0
-    store_names = sorted(set(o['store'] for o in orders))
-    return render_template('admin_orders.html', orders=filtered_orders,
-                           start_date=start_date or '', end_date=end_date or '',
+            continue
+
+    total_quantity = sum(int(o.get('quantity') or 0) for o in filtered_orders)
+    store_names = sorted(set(o.get('store') for o in orders if o.get('store')))
+
+    return render_template('admin_orders.html',
+                           orders=filtered_orders,
+                           start_date=start_date or '',
+                           end_date=end_date or '',
                            selected_store=selected_store or '',
-                           store_names=store_names, total_quantity=total_quantity)
+                           store_names=store_names,
+                           total_quantity=total_quantity)
+
 
 @app.route('/admin/items')
 def manage_items():
