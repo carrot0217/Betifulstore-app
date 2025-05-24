@@ -2,107 +2,117 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <title>상품 신청</title>
+  <title>🛒 상품 신청</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     body {
-      font-family: 'Segoe UI', sans-serif;
       background-color: #fffaf3;
-      color: #4e342e;
+      font-family: 'Segoe UI', sans-serif;
       text-align: center;
-      padding: 30px;
+      padding: 40px;
+      color: #4e342e;
     }
     h1 {
-      margin-bottom: 30px;
-      font-size: 2em;
+      font-size: 1.8em;
+      margin-bottom: 40px;
     }
-    .container {
+    .card-container {
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
-      gap: 20px;
+      gap: 30px;
     }
     .card {
-      background-color: #fff3e0;
+      background-color: #ffefcc;
       border-radius: 16px;
       padding: 20px;
-      width: 240px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      width: 220px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
       position: relative;
     }
     .card img {
       width: 100%;
-      height: 160px;
-      object-fit: cover;
       border-radius: 8px;
     }
-    .zoom-icon {
+    .zoom-btn {
       position: absolute;
-      top: 16px;
-      right: 16px;
-      background-color: rgba(255, 255, 255, 0.8);
-      border-radius: 50%;
-      padding: 6px;
+      top: 12px;
+      right: 12px;
+      background-color: #fff8e1;
+      border: none;
+      font-size: 1.1em;
       cursor: pointer;
+      border-radius: 50%;
+      width: 28px;
+      height: 28px;
     }
-    input, select {
-      width: 100%;
+    .card h3 {
+      margin: 15px 0 5px;
+    }
+    .card p {
+      margin: 5px 0;
+    }
+    input[type="number"], input[type="date"] {
+      width: 90%;
+      padding: 6px;
       margin: 6px 0;
-      padding: 8px;
-      border: 1px solid #ccc;
       border-radius: 6px;
+      border: 1px solid #ccc;
     }
-    button {
-      padding: 10px;
-      width: 100%;
+    button.submit-btn {
       background-color: #ffcc80;
       color: #4e342e;
+      font-weight: bold;
+      padding: 8px 16px;
       border: none;
       border-radius: 8px;
-      font-weight: bold;
+      margin-top: 8px;
       cursor: pointer;
     }
-    button:hover {
+    button.submit-btn:hover {
       background-color: #ffb74d;
     }
-    .footer {
-      margin-top: 30px;
+    .home-btn {
+      display: inline-block;
+      margin-top: 40px;
+      padding: 10px 24px;
+      background-color: #ffcc80;
+      color: #4e342e;
+      font-weight: bold;
+      text-decoration: none;
+      border-radius: 10px;
+    }
+    .home-btn:hover {
+      background-color: #ffb74d;
     }
   </style>
 </head>
 <body>
-  <h1><i class="fa-solid fa-cart-shopping"></i> 상품 신청</h1>
-  <div class="container">
+  <h1>🛒 상품 신청</h1>
+
+  <div class="card-container">
     {% for item in items %}
     <div class="card">
-      <img src="/static/uploads/{{ item.image }}" alt="{{ item.name }}">
-      <div class="zoom-icon" onclick="openImagePopup('{{ url_for('static', filename='uploads/' ~ item.image) }}')">
-        <i class="fa-solid fa-magnifying-glass"></i>
-      </div>
+      <!-- 이미지 + 확대 버튼 -->
+      <img src="{{ url_for('static', filename='uploads/' ~ item.image) }}" alt="{{ item.name }}">
+      <button class="zoom-btn" onclick="window.open('{{ url_for('static', filename='uploads/' ~ item.image) }}', '_blank')">🔍</button>
+
       <h3>{{ item.name }}</h3>
       <p>재고: {{ item.stock }}개</p>
+
       <form method="post" action="/order">
         <input type="hidden" name="item_name" value="{{ item.name }}">
-        <label>신청 수량</label>
-        <input name="quantity" type="number" min="1" required>
-        <label>입고 희망일</label>
-        <input name="wish_date" type="date" required>
-        <button type="submit">신청</button>
+        <label>신청 수량</label><br>
+        <input type="number" name="quantity" required><br>
+        <label>입고 희망일</label><br>
+        <input type="date" name="wish_date" required><br>
+        <button class="submit-btn" type="submit">신청</button>
       </form>
     </div>
     {% endfor %}
   </div>
-  <div class="footer">
-    <a href="/logout" style="text-decoration:none;color:#4e342e;"><i class="fa-solid fa-lock"></i> 로그아웃</a>
-  </div>
 
-  <script>
-    function openImagePopup(imageUrl) {
-      const popup = window.open('', 'ImagePopup', 'width=600,height=600');
-      popup.document.write('<html><head><title>이미지 확대</title></head><body style="margin:0;padding:0;text-align:center;background:#fffaf3;"><img src="' + imageUrl + '" style="max-width:100%;max-height:100%;border-radius:12px;"></body></html>');
-    }
-  </script>
+  <a href="/user/home" class="home-btn">🏠 홈으로</a>
 </body>
 </html>
 
