@@ -63,12 +63,13 @@ def user_home():
         return redirect(url_for('login'))
     return render_template('user_home.html')
 
-@app.route('/admin/home')
-def admin_home():
-    if session.get('role') != 'admin':
+@app.route('/orders')
+def view_orders():
+    if session.get('role') != 'user':
         return redirect(url_for('login'))
-    admin_type = session.get('admin_type', '1')
-    return render_template('admin_home.html', admin_type=admin_type)
+    orders = load_csv(ORDER_FILE)
+    user_orders = [o for o in orders if o['store'] == session['user_id']]
+    return render_template('orders.html', orders=user_orders)
 
 @app.route('/order', methods=['POST'])
 def place_order():
@@ -97,6 +98,13 @@ def place_order():
             else:
                 return f"❗ 재고 부족: 현재 {current_stock}개 남아 있습니다."
     return "❌ 상품을 찾을 수 없습니다."
+
+@app.route('/admin/home')
+def admin_home():
+    if session.get('role') != 'admin':
+        return redirect(url_for('login'))
+    admin_type = session.get('admin_type', '1')
+    return render_template('admin_home.html', admin_type=admin_type)
 
 @app.route('/admin/orders')
 def admin_orders():
@@ -193,14 +201,12 @@ def add_item():
     if image_file and image_file.filename:
         image_filename = secure_filename(image_file.filename)
         save_path = os.path.join(app.config['UPLOAD_FOLDER'], image_filename)
-
         base, ext = os.path.splitext(image_filename)
         count = 1
         while os.path.exists(save_path):
             image_filename = f"{base}_{count}{ext}"
             save_path = os.path.join(app.config['UPLOAD_FOLDER'], image_filename)
             count += 1
-
         image_file.save(save_path)
 
     items = load_csv(ITEM_FILE)
