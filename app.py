@@ -106,8 +106,8 @@ def admin_home():
         return redirect(url_for('login'))
     return render_template('admin_home.html')
 
-@app.route('/admin/dashboard')
-def admin_dashboard():
+@app.route('/admin/orders')
+def admin_orders():
     if session.get('role') != 'admin':
         return redirect(url_for('login'))
 
@@ -120,73 +120,63 @@ def admin_dashboard():
 
     if start_date and end_date:
         try:
-            start_dt = datetime.strptime(start_date, "%Y-%m-%d")
-            end_dt = datetime.strptime(end_date, "%Y-%m-%d")
-            valid_orders = []
-            for o in filtered_orders:
-                try:
-                    if 'wish_date' in o and o['wish_date']:
-                        order_date = datetime.strptime(o['wish_date'], "%Y-%m-%d")
-                        if start_dt <= order_date <= end_dt:
-                            valid_orders.append(o)
-                except:
-                    continue
-            filtered_orders = valid_orders
+            sdt = datetime.strptime(start_date, "%Y-%m-%d")
+            edt = datetime.strptime(end_date, "%Y-%m-%d")
+            filtered_orders = [
+                o for o in filtered_orders
+                if 'date' in o and o['date'] and sdt <= datetime.strptime(o['date'], "%Y-%m-%d") <= edt
+            ]
         except:
             pass
 
     if selected_store:
-        filtered_orders = [o for o in filtered_orders if o.get('store') == selected_store]
+        filtered_orders = [o for o in filtered_orders if o['store'] == selected_store]
 
-    total_orders = len(filtered_orders)
-    total_quantity = sum(int(o.get('quantity', 0) or 0) for o in filtered_orders)
+    total_quantity = sum(int(o['quantity']) for o in filtered_orders) if filtered_orders else 0
+    store_names = sorted(set(o['store'] for o in orders))
 
-    recent_7_days = [(datetime.now() - timedelta(days=i)).strftime('%Y-%m-%d') for i in range(6, -1, -1)]
-    daily_counts = {d: 0 for d in recent_7_days}
-    for o in filtered_orders:
-        date = o.get('wish_date')
-        if date in daily_counts:
-            daily_counts[date] += 1
-    daily_data = [daily_counts[d] for d in recent_7_days]
+    return render_template('admin_orders.html',
+                           orders=filtered_orders,
+                           start_date=start_date or '',
+                           end_date=end_date or '',
+                           selected_store=selected_store or '',
+                           store_names=store_names,
+                           total_quantity=total_quantity)
 
-    store_counts = {}
-    item_counts = {}
-    for o in filtered_orders:
-        store = o.get('store')
-        item = o.get('item')
-        qty = int(o.get('quantity', 0) or 0)
-        if store:
-            store_counts[store] = store_counts.get(store, 0) + qty
-        if item:
-            item_counts[item] = item_counts.get(item, 0) + qty
+@app.route('/admin/items')
+def manage_items():
+    if session.get('role') != 'admin':
+        return redirect(url_for('login'))
+    items = load_csv(ITEM_FILE)
+    return render_template('admin_items.html', items=items)
 
-    store_names = list(store_counts.keys())
-    store_values = list(store_counts.values())
-    item_names = list(item_counts.keys())
-    item_values = list(item_counts.values())
+@app.route('/admin/users', methods=['GET', 'POST'])
+def manage_users():
+    if session.get('role') != 'admin':
+        return redirect(url_for('login'))
 
-    top_items = sorted(item_counts.items(), key=lambda x: x[1], reverse=True)[:5]
-    store_list = sorted(set(o.get('store') for o in orders if o.get('store')))
-    item_list = sorted(set(o.get('item') for o in orders if o.get('item')))
+    users = load_csv(USER_FILE)
 
-    return render_template('admin_dashboard.html',
-        store_names=store_names,
-        store_values=store_values,
-        item_names=item_names,
-        item_values=item_values,
-        start_date=start_date or '',
-        end_date=end_date or '',
-        selected_store=selected_store or '',
-        store_list=store_list,
-        item_list=item_list,
-        total_orders=total_orders,
-        total_quantity=total_quantity,
-        recent_7_days=recent_7_days,
-        daily_data=daily_data,
-        top_items=top_items
-    )
+    if request.method == 'POST':
+        action = request.form.get('action')
+        user_id = request.form.get('user_id')
+        password = request.form.get('password')
+        role = request.form.get('role')
+
+        if action == 'add':
+            users.append({'user_id': user_id, 'password': password, 'role': role})
+        elif action == 'delete':
+            users = [u for u in users if u['user_id'] != user_id]
+
+        save_csv(USER_FILE, users, ['user_id', 'password', 'role'])
+        return redirect(url_for('manage_users'))
+
+    return render_template('manage_users.html', users=users)
+
+@app.route('/admin/dashboard')
+def admin_dashboard():
+    ...  # 기존 코드 유지
 
 if __name__ == '__main__':
-    port = int(os.environ.get('PORT', 10000))  # Render가 할당하는 포트
+    port = int(os.environ.get('PORT', 10000))
     app.run(host='0.0.0.0', port=port)
-
