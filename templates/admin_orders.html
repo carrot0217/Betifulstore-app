@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <title>📄 전체 주문 이력</title>
+  <title>📋 전체 주문 목록</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
     body {
@@ -15,6 +15,29 @@
       color: #5a4031;
       margin-bottom: 20px;
     }
+    .filter-form {
+      margin-bottom: 20px;
+      font-size: 0.95em;
+    }
+    input[type="date"], select {
+      padding: 6px 10px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      background-color: #ffe0b2;
+      margin: 0 5px;
+    }
+    button {
+      padding: 8px 18px;
+      background-color: #ffcc80;
+      border: none;
+      border-radius: 6px;
+      font-weight: bold;
+      color: #4e342e;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #ffb74d;
+    }
     table {
       margin: auto;
       border-collapse: collapse;
@@ -24,6 +47,7 @@
       box-shadow: 0 4px 10px rgba(0,0,0,0.1);
       border-radius: 12px;
       overflow: hidden;
+      margin-top: 20px;
     }
     th, td {
       padding: 12px;
@@ -36,10 +60,34 @@
     tr:hover {
       background-color: #fff3e0;
     }
+    .summary {
+      margin-top: 20px;
+      font-weight: bold;
+      color: #4e342e;
+    }
   </style>
 </head>
 <body>
-  <h1>📄 전체 주문 이력 보기</h1>
+  <h1>📋 전체 주문 목록 보기</h1>
+
+  <form class="filter-form" method="get" action="/admin/orders">
+    <label>기간:
+      <input type="date" name="start" value="{{ start_date }}">
+      ~
+      <input type="date" name="end" value="{{ end_date }}">
+    </label>
+    <label>
+      매장:
+      <select name="store">
+        <option value="">전체</option>
+        {% for store in store_names %}
+        <option value="{{ store }}" {% if selected_store == store %}selected{% endif %}>{{ store }}</option>
+        {% endfor %}
+      </select>
+    </label>
+    <button type="submit">조회</button>
+  </form>
+
   {% if orders %}
   <table>
     <tr>
@@ -59,6 +107,10 @@
     </tr>
     {% endfor %}
   </table>
+
+  <div class="summary">
+    총 신청 수량: {{ total_quantity }}개
+  </div>
   {% else %}
   <p>📭 주문 이력이 없습니다.</p>
   {% endif %}
