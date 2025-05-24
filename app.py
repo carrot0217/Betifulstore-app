@@ -20,13 +20,13 @@ ORDER_FILE = os.path.join(DATA_FOLDER, 'orders.csv')
 os.makedirs(DATA_FOLDER, exist_ok=True)
 
 default_users = [
-    {'user_id': 'admin', 'password': 'admin123', 'role': 'admin'},
+    {'user_id': 'admin', 'password': 'admin123', 'role': 'admin', 'admin_type': '2'},
     {'user_id': 'gangnam', 'password': '1234', 'role': 'user'},
     {'user_id': 'seochogu', 'password': 'abcd1234', 'role': 'user'},
 ]
 
 if not os.path.exists(USER_FILE):
-    save_csv(USER_FILE, default_users, ['user_id', 'password', 'role'])
+    save_csv(USER_FILE, default_users, ['user_id', 'password', 'role', 'admin_type'])
 
 @app.route('/')
 def index():
@@ -46,6 +46,8 @@ def login():
             if user['user_id'] == user_id and user['password'] == password:
                 session['user_id'] = user_id
                 session['role'] = user['role']
+                if user['role'] == 'admin':
+                    session['admin_type'] = user.get('admin_type', '1')
                 return redirect(url_for('admin_home' if user['role'] == 'admin' else 'user_home'))
         message = '❌ 로그인 실패: ID 또는 비밀번호 확인'
     return render_template('login.html', message=message)
@@ -61,13 +63,12 @@ def user_home():
         return redirect(url_for('login'))
     return render_template('user_home.html')
 
-@app.route('/orders')
-def view_orders():
-    if session.get('role') != 'user':
+@app.route('/admin/home')
+def admin_home():
+    if session.get('role') != 'admin':
         return redirect(url_for('login'))
-    orders = load_csv(ORDER_FILE)
-    user_orders = [o for o in orders if o['store'] == session['user_id']]
-    return render_template('orders.html', orders=user_orders)
+    admin_type = session.get('admin_type', '1')
+    return render_template('admin_home.html', admin_type=admin_type)
 
 @app.route('/order', methods=['POST'])
 def place_order():
