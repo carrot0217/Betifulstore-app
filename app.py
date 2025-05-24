@@ -155,6 +155,57 @@ def manage_users():
         save_csv(USER_FILE, users, ['user_id', 'password', 'role'])
         return redirect(url_for('manage_users'))
     return render_template('manage_users.html', users=users)
+@app.route('/admin/dashboard')
+def admin_dashboard():
+    if session.get('role') != 'admin':
+        return redirect(url_for('login'))
+
+    start_date = request.args.get('start')
+    end_date = request.args.get('end')
+    selected_store = request.args.get('store')
+
+    orders = load_csv(ORDER_FILE)
+    filtered_orders = orders
+
+    if start_date and end_date:
+        try:
+            sdt = datetime.strptime(start_date, "%Y-%m-%d")
+            edt = datetime.strptime(end_date, "%Y-%m-%d")
+            filtered_orders = [
+                o for o in filtered_orders
+                if 'wish_date' in o and o['wish_date'] and sdt <= datetime.strptime(o['wish_date'], "%Y-%m-%d") <= edt
+            ]
+        except:
+            pass
+
+    if selected_store:
+        filtered_orders = [o for o in filtered_orders if o.get('store') == selected_store]
+
+    store_counts = {}
+    item_counts = {}
+    for o in filtered_orders:
+        store = o.get('store')
+        item = o.get('item')
+        qty = int(o.get('quantity', 0) or 0)
+        if store: store_counts[store] = store_counts.get(store, 0) + qty
+        if item: item_counts[item] = item_counts.get(item, 0) + qty
+
+    total_orders = len(filtered_orders)
+    total_quantity = sum(int(o.get('quantity', 0) or 0) for o in filtered_orders)
+    top_items = sorted(item_counts.items(), key=lambda x: x[1], reverse=True)[:5]
+
+    return render_template("admin_dashboard.html",
+                           store_names=list(store_counts.keys()),
+                           store_values=list(store_counts.values()),
+                           item_names=list(item_counts.keys()),
+                           item_values=list(item_counts.values()),
+                           top_items=top_items,
+                           total_orders=total_orders,
+                           total_quantity=total_quantity,
+                           start_date=start_date or '',
+                           end_date=end_date or '',
+                           selected_store=selected_store or '',
+                           store_list=sorted(set(o.get('store') for o in orders if o.get('store'))))
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 10000))
