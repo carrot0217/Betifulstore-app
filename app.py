@@ -114,8 +114,44 @@ def admin_home():
 def admin_orders():
     if session.get('role') != 'admin':
         return redirect(url_for('login'))
+
+    # 🔍 필터 파라미터 받아오기
+    start_date = request.args.get('start')
+    end_date = request.args.get('end')
+    selected_store = request.args.get('store')
+
     orders = load_csv(ORDER_FILE)
-    return render_template('admin_orders.html', orders=orders)
+    filtered_orders = orders
+
+    # ✅ 날짜 필터 적용
+    if start_date and end_date:
+        try:
+            sdt = datetime.strptime(start_date, "%Y-%m-%d")
+            edt = datetime.strptime(end_date, "%Y-%m-%d")
+            filtered_orders = [
+                o for o in filtered_orders
+                if 'date' in o and o['date'] and sdt <= datetime.strptime(o['date'], "%Y-%m-%d") <= edt
+            ]
+        except:
+            pass
+
+    # ✅ 매장 필터 적용
+    if selected_store:
+        filtered_orders = [o for o in filtered_orders if o['store'] == selected_store]
+
+    # ✅ 총 수량 계산
+    total_quantity = sum(int(o['quantity']) for o in filtered_orders) if filtered_orders else 0
+
+    # ✅ 필터용 매장 목록 추출
+    store_names = sorted(set(o['store'] for o in orders))
+
+    return render_template('admin_orders.html',
+                           orders=filtered_orders,
+                           start_date=start_date or '',
+                           end_date=end_date or '',
+                           selected_store=selected_store or '',
+                           store_names=store_names,
+                           total_quantity=total_quantity)
 
 @app.route('/admin/items')
 def manage_items():
