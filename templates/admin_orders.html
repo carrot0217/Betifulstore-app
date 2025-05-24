@@ -1,20 +1,22 @@
 <!DOCTYPE html>
 <html lang="ko">
-<head><meta charset="UTF-8"><title>전체 주문 이력</title></head>
+<head>
+  <meta charset="UTF-8">
+  <title>📋 전체 주문 목록</title>
+</head>
 <body>
-  <h2>전체 주문 이력</h2>
-  {% if orders %}
-  <table border="1">
+  <h1>전체 주문 목록</h1>
+  <table>
     <tr><th>매장</th><th>상품명</th><th>수량</th><th>희망일</th><th>신청일</th></tr>
     {% for o in orders %}
     <tr>
-      <td>{{ o.store }}</td><td>{{ o.item }}</td><td>{{ o.quantity }}</td><td>{{ o.wish_date }}</td><td>{{ o.date }}</td>
+      <td>{{ o.store }}</td>
+      <td>{{ o.item }}</td>
+      <td>{{ o.quantity }}</td>
+      <td>{{ o.wish_date }}</td>
+      <td>{{ o.date }}</td>
     </tr>
     {% endfor %}
   </table>
-  <p>총 신청 수량: {{ total_quantity }}개</p>
-  {% else %}
-  <p>주문 데이터 없음</p>
-  {% endif %}
 </body>
 </html>
