@@ -33,6 +33,7 @@ def index():
     if 'user_id' not in session or session.get('role') != 'user':
         return redirect(url_for('login'))
     items = load_csv(ITEM_FILE)
+    items = [item for item in items if int(item.get('stock', 0)) > 0]
     return render_template('index.html', items=items)
 
 @app.route('/login', methods=['GET', 'POST'])
