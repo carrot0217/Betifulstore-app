@@ -97,7 +97,8 @@ def place_order():
                 }, ['store', 'item', 'quantity', 'wish_date', 'date'])
                 return redirect(url_for('index'))
             else:
-                return f"❗ 재고 부족: 현재 {current_stock}개 남아 있습니다."
+                return render_template("stock_alert.html", item_name=item_name, stock=current_stock)
+
     return "❌ 상품을 찾을 수 없습니다."
 
 @app.route('/admin/home')
