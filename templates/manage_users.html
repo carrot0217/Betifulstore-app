@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head><meta charset="UTF-8"><title>사용자 관리</title></head>
+<body>
+  <h2>사용자 관리</h2>
+  <form method="post">
+    <input name="user_id" placeholder="ID">
+    <input name="password" placeholder="비밀번호">
+    <select name="role">
+      <option value="user">user</option>
+      <option value="admin">admin</option>
+    </select>
+    <button name="action" value="add">추가</button>
+    <button name="action" value="delete">삭제</button>
+  </form>
+  <ul>
+  {% for user in users %}
+    <li>{{ user.user_id }} ({{ user.role }})</li>
+  {% endfor %}
+  </ul>
+</body>
+</html>

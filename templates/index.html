@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head><meta charset="UTF-8"><title>상품 신청</title></head>
+<body>
+  <h2>상품 신청</h2>
+  <form method="post" action="/order">
+    <select name="item_name">
+      {% for item in items %}
+      <option value="{{ item.name }}">{{ item.name }}</option>
+      {% endfor %}
+    </select>
+    <input name="quantity" type="number" placeholder="수량">
+    <input name="wish_date" type="date">
+    <button type="submit">신청</button>
+  </form>
+  <a href="/logout">로그아웃</a>
+</body>
+</html>

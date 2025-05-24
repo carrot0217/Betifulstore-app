@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head><meta charset="UTF-8"><title>주문 이력</title></head>
+<body>
+  <h2>나의 주문 이력</h2>
+  {% if orders %}
+    <ul>
+    {% for order in orders %}
+      <li>{{ order.item }} - {{ order.quantity }}개 ({{ order.wish_date }})</li>
+    {% endfor %}
+    </ul>
+  {% else %}
+    <p>주문 이력이 없습니다.</p>
+  {% endif %}
+  <a href="/user/home">홈으로</a>
+</body>
+</html>
