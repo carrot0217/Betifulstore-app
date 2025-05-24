@@ -105,14 +105,15 @@
     </thead>
     <tbody>
       {% for o in orders %}
-      <tr>
-        <td>{{ o.store }}</td>
-        <td>{{ o.item }}</td>
-        <td>{{ o.quantity }}</td>
-        <td>{{ o.wish_date }}</td>
-        <td>{{ o.date }}</td>
-      </tr>
-      {% endfor %}
+<tr>
+  <td>{{ o.get('store', '') }}</td>
+  <td>{{ o.get('item', '') }}</td>
+  <td>{{ o.get('quantity', '') }}</td>
+  <td>{{ o.get('wish_date', '') }}</td>
+  <td>{{ o.get('date', '') }}</td>
+</tr>
+{% endfor %}
+
     </tbody>
   </table>
 
