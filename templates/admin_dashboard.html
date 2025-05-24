@@ -1,10 +1,13 @@
 <!DOCTYPE html>
 <html lang="ko">
-<head><meta charset="UTF-8"><title>통계 대시보드</title>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script></head>
+<head>
+  <meta charset="UTF-8">
+  <title>📊 통계 대시보드</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
 <body>
-  <h2>📊 통계 대시보드</h2>
-  <p>총 주문 수: {{ total_orders }} / 총 수량: {{ total_quantity }}개</p>
+  <h1>📊 통계 대시보드</h1>
+  <p>총 주문 수: {{ total_orders }}건 / 총 수량: {{ total_quantity }}개</p>
   <canvas id="storeChart" width="400" height="200"></canvas>
   <canvas id="itemChart" width="400" height="200"></canvas>
   <script>
@@ -12,13 +15,20 @@
     const storeValues = {{ store_values|tojson }};
     new Chart(document.getElementById('storeChart'), {
       type: 'bar',
-      data: { labels: storeNames, datasets: [{ label: '매장별 수량', data: storeValues }] }
+      data: {
+        labels: storeNames,
+        datasets: [{ label: '매장별 수량', data: storeValues }]
+      }
     });
+
     const itemNames = {{ item_names|tojson }};
     const itemValues = {{ item_values|tojson }};
     new Chart(document.getElementById('itemChart'), {
       type: 'bar',
-      data: { labels: itemNames, datasets: [{ label: '상품별 수량', data: itemValues }] }
+      data: {
+        labels: itemNames,
+        datasets: [{ label: '상품별 수량', data: itemValues }]
+      }
     });
   </script>
 </body>
