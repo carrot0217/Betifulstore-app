@@ -317,6 +317,47 @@ def download_dashboard_data():
     return send_file(output, as_attachment=True, download_name=filename,
                      mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
 
+@app.route('/admin/orders/download')
+def download_orders_excel():
+    if session.get('role') != 'admin':
+        return redirect(url_for('login'))
+
+    start_date = request.args.get('start')
+    end_date = request.args.get('end')
+    selected_store = request.args.get('store')
+
+    orders = load_csv(ORDER_FILE)
+    filtered_orders = orders
+
+    if start_date and end_date:
+        try:
+            sdt = datetime.strptime(start_date, "%Y-%m-%d")
+            edt = datetime.strptime(end_date, "%Y-%m-%d")
+            filtered_orders = [
+                o for o in filtered_orders
+                if 'date' in o and o['date'] and sdt <= datetime.strptime(o['date'], "%Y-%m-%d") <= edt
+            ]
+        except:
+            pass
+
+    if selected_store:
+        filtered_orders = [o for o in filtered_orders if o['store'] == selected_store]
+
+    if not filtered_orders:
+        return render_template("no_data.html")
+
+    df = pd.DataFrame(filtered_orders)
+    output = io.BytesIO()
+    with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
+        df.to_excel(writer, index=False, sheet_name='주문내역')
+    output.seek(0)
+
+    today_str = datetime.now().strftime('%Y%m%d')
+    filename = f"전체주문목록_{today_str}.xlsx"
+    return send_file(output, as_attachment=True, download_name=filename,
+                     mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+
+
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port)
