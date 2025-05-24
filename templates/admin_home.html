@@ -1,14 +1,52 @@
 <!DOCTYPE html>
 <html lang="ko">
-<head><meta charset="UTF-8"><title>관리자 홈</title></head>
+<head>
+  <meta charset="UTF-8">
+  <title>관리자 홈</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #fffaf3;
+      color: #4e342e;
+      text-align: center;
+      padding: 40px;
+    }
+    h2 {
+      color: #5a4031;
+      margin-bottom: 30px;
+    }
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+    li {
+      margin: 15px 0;
+    }
+    a {
+      display: inline-block;
+      padding: 12px 24px;
+      background-color: #ffcc80;
+      border-radius: 12px;
+      text-decoration: none;
+      font-weight: bold;
+      color: #4e342e;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      transition: background-color 0.3s ease;
+    }
+    a:hover {
+      background-color: #ffb74d;
+    }
+  </style>
+</head>
 <body>
-  <h2>관리자 홈</h2>
+  <h2>📁 관리자 홈</h2>
   <ul>
-    <li><a href="/admin/orders">전체 주문 이력</a></li>
-    <li><a href="/admin/dashboard">통계 대시보드</a></li>
-    <li><a href="/admin/items">상품 등록/삭제</a></li>
-    <li><a href="/admin/users">사용자 등록/삭제</a></li>
-    <li><a href="/logout">로그아웃</a></li>
+    <li><a href="/admin/orders">📋 전체 주문 이력</a></li>
+    <li><a href="/admin/dashboard">📊 통계 대시보드</a></li>
+    <li><a href="/admin/items">📦 상품 등록/삭제</a></li>
+    <li><a href="/admin/users">👥 사용자 등록/삭제</a></li>
+    <li><a href="/logout">🚪 로그아웃</a></li>
   </ul>
 </body>
 </html>
