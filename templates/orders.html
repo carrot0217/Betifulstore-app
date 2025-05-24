@@ -1,8 +1,56 @@
 <!DOCTYPE html>
 <html lang="ko">
-<head><meta charset="UTF-8"><title>주문 이력</title></head>
+<head>
+  <meta charset="UTF-8">
+  <title>🧾 나의 주문 이력</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #fffaf3;
+      text-align: center;
+      padding: 40px;
+      color: #4e342e;
+    }
+    h2 {
+      color: #5a4031;
+      margin-bottom: 30px;
+    }
+    ul {
+      list-style: none;
+      padding: 0;
+      margin: 20px auto;
+      max-width: 500px;
+    }
+    li {
+      background-color: #fff;
+      margin: 10px 0;
+      padding: 12px 20px;
+      border-radius: 10px;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.06);
+      text-align: left;
+    }
+    p {
+      color: #888;
+    }
+    a {
+      display: inline-block;
+      margin-top: 30px;
+      padding: 10px 20px;
+      background-color: #ffcc80;
+      border-radius: 8px;
+      text-decoration: none;
+      color: #4e342e;
+      font-weight: bold;
+    }
+    a:hover {
+      background-color: #ffb74d;
+    }
+  </style>
+</head>
 <body>
-  <h2>나의 주문 이력</h2>
+  <h2>🧾 나의 주문 이력</h2>
+
   {% if orders %}
     <ul>
     {% for order in orders %}
@@ -10,8 +58,9 @@
     {% endfor %}
     </ul>
   {% else %}
-    <p>주문 이력이 없습니다.</p>
+    <p>📭 주문 이력이 없습니다.</p>
   {% endif %}
-  <a href="/user/home">홈으로</a>
+
+  <a href="/user/home">🏠 홈으로</a>
 </body>
 </html>
