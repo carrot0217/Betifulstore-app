@@ -186,6 +186,40 @@ def manage_items():
         return redirect(url_for('login'))
     items = load_csv(ITEM_FILE)
     return render_template('admin_items.html', items=items)
+@app.route('/admin/items/add', methods=['POST'])
+def add_item():
+    if session.get('role') != 'admin':
+        return redirect(url_for('login'))
+
+    name = request.form.get('name')
+    description = request.form.get('description', '')
+    stock = request.form.get('stock', '0')
+    image_file = request.files.get('image')
+    image_filename = ''
+
+    if image_file and image_file.filename:
+        image_filename = secure_filename(image_file.filename)
+        save_path = os.path.join(app.config['UPLOAD_FOLDER'], image_filename)
+
+        base, ext = os.path.splitext(image_filename)
+        count = 1
+        while os.path.exists(save_path):
+            image_filename = f"{base}_{count}{ext}"
+            save_path = os.path.join(app.config['UPLOAD_FOLDER'], image_filename)
+            count += 1
+
+        image_file.save(save_path)
+
+    items = load_csv(ITEM_FILE)
+    items.append({
+        'name': name,
+        'description': description,
+        'stock': stock,
+        'image': image_filename
+    })
+    save_csv(ITEM_FILE, items, ['name', 'description', 'stock', 'image'])
+
+    return redirect(url_for('manage_items'))
 
 @app.route('/admin/users', methods=['GET', 'POST'])
 def manage_users():
