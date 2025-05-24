@@ -98,12 +98,6 @@ def place_order():
                 return f"❗ 재고 부족: 현재 {current_stock}개 남아 있습니다."
     return "❌ 상품을 찾을 수 없습니다."
 
-@app.route('/admin/home')
-def admin_home():
-    if session.get('role') != 'admin':
-        return redirect(url_for('login'))
-    return render_template('admin_home.html')
-
 @app.route('/admin/orders')
 def admin_orders():
     if session.get('role') != 'admin':
@@ -138,12 +132,12 @@ def admin_orders():
                            selected_store=selected_store or '',
                            store_names=store_names,
                            total_quantity=total_quantity)
+
 @app.route('/admin/orders/download')
 def download_orders_excel():
     if session.get('role') != 'admin':
         return redirect(url_for('login'))
 
-    # 필터 파라미터 받기
     start_date = request.args.get('start')
     end_date = request.args.get('end')
     selected_store = request.args.get('store')
@@ -167,8 +161,6 @@ def download_orders_excel():
         return "❗ 다운로드할 주문 내역이 없습니다.", 400
 
     df = pd.DataFrame(filtered_orders)
-
-    # 엑셀로 변환
     output = io.BytesIO()
     with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
         df.to_excel(writer, index=False, sheet_name='주문내역')
@@ -180,13 +172,13 @@ def download_orders_excel():
                      as_attachment=True,
                      mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
 
-
 @app.route('/admin/items')
 def manage_items():
     if session.get('role') != 'admin':
         return redirect(url_for('login'))
     items = load_csv(ITEM_FILE)
     return render_template('admin_items.html', items=items)
+
 @app.route('/admin/items/add', methods=['POST'])
 def add_item():
     if session.get('role') != 'admin':
@@ -239,6 +231,7 @@ def manage_users():
         save_csv(USER_FILE, users, ['user_id', 'password', 'role'])
         return redirect(url_for('manage_users'))
     return render_template('manage_users.html', users=users)
+
 @app.route('/admin/dashboard')
 def admin_dashboard():
     if session.get('role') != 'admin':
