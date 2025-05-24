@@ -1,13 +1,67 @@
 <!DOCTYPE html>
 <html lang="ko">
-<head><meta charset="UTF-8"><title>로그인</title></head>
+<head>
+  <meta charset="UTF-8">
+  <title>🔐 로그인</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #fffaf3;
+      color: #4e342e;
+      text-align: center;
+      padding: 60px;
+    }
+    h2 {
+      margin-bottom: 30px;
+      color: #5a4031;
+    }
+    form {
+      display: inline-block;
+      background-color: #fff;
+      padding: 30px 40px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+    input[type="text"], input[type="password"] {
+      display: block;
+      width: 250px;
+      margin: 10px auto;
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      background-color: #fff8e1;
+      font-size: 1em;
+    }
+    button {
+      margin-top: 20px;
+      padding: 10px 24px;
+      background-color: #ffcc80;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+      color: #4e342e;
+    }
+    button:hover {
+      background-color: #ffb74d;
+    }
+    p {
+      color: red;
+      font-weight: bold;
+      margin-top: 20px;
+    }
+  </style>
+</head>
 <body>
-  <h2>로그인</h2>
+  <h2>🔐 로그인</h2>
+
   <form method="post">
-    <input name="user_id" placeholder="아이디"><br>
-    <input name="password" type="password" placeholder="비밀번호"><br>
+    <input name="user_id" type="text" placeholder="아이디" required>
+    <input name="password" type="password" placeholder="비밀번호" required>
     <button type="submit">로그인</button>
   </form>
-  <p style="color:red;">{{ message }}</p>
+
+  <p>{{ message }}</p>
 </body>
 </html>
