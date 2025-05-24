@@ -100,7 +100,7 @@
       <h3>{{ item.name }}</h3>
       <p>재고: {{ item.stock }}개</p>
 
-      <form method="post" action="/order">
+     <form method="post" action="/order" target="_blank">
         <input type="hidden" name="item_name" value="{{ item.name }}">
         <label>신청 수량</label><br>
         <input type="number" name="quantity" required><br>
