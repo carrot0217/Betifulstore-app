@@ -1,18 +1,78 @@
 <!DOCTYPE html>
 <html lang="ko">
-<head><meta charset="UTF-8"><title>상품 신청</title></head>
+<head>
+  <meta charset="UTF-8">
+  <title>🛒 상품 신청</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #fffaf3;
+      color: #4e342e;
+      text-align: center;
+      padding: 40px;
+    }
+    h2 {
+      margin-bottom: 30px;
+      color: #5a4031;
+    }
+    form {
+      background-color: #fff;
+      padding: 30px;
+      display: inline-block;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    }
+    select, input[type="number"], input[type="date"] {
+      display: block;
+      width: 250px;
+      margin: 12px auto;
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      background-color: #fff8e1;
+      font-size: 1em;
+    }
+    button {
+      margin-top: 16px;
+      padding: 10px 24px;
+      background-color: #ffcc80;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+      color: #4e342e;
+    }
+    button:hover {
+      background-color: #ffb74d;
+    }
+    a {
+      display: inline-block;
+      margin-top: 20px;
+      color: #5a4031;
+      font-weight: bold;
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
 <body>
-  <h2>상품 신청</h2>
+  <h2>🛒 상품 신청</h2>
+
   <form method="post" action="/order">
-    <select name="item_name">
+    <select name="item_name" required>
+      <option value="" disabled selected>상품 선택</option>
       {% for item in items %}
       <option value="{{ item.name }}">{{ item.name }}</option>
       {% endfor %}
     </select>
-    <input name="quantity" type="number" placeholder="수량">
-    <input name="wish_date" type="date">
+    <input name="quantity" type="number" placeholder="수량" min="1" required>
+    <input name="wish_date" type="date" required>
     <button type="submit">신청</button>
   </form>
-  <a href="/logout">로그아웃</a>
+
+  <a href="/logout">🔓 로그아웃</a>
 </body>
 </html>
