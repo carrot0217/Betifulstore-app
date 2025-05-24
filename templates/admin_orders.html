@@ -69,6 +69,39 @@
       font-weight: bold;
       color: #4e342e;
     }
+    .preview-img-icon {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background-color: rgba(255, 255, 255, 0.9);
+      border-radius: 50%;
+      padding: 6px;
+      cursor: pointer;
+    }
+    .preview-popup {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 1000;
+      background: white;
+      border: 2px solid #ffcc80;
+      padding: 20px;
+      border-radius: 12px;
+    }
+    .preview-popup img {
+      max-width: 100%;
+      height: auto;
+    }
+    .preview-popup-close {
+      margin-top: 10px;
+      background-color: #ffcc80;
+      padding: 6px 12px;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
@@ -105,18 +138,16 @@
     </thead>
     <tbody>
       {% for o in orders %}
-<tr>
-  <td>{{ o.get('store', '') }}</td>
-  <td>{{ o.get('item', '') }}</td>
-  <td>{{ o.get('quantity', '') }}</td>
-  <td>{{ o.get('wish_date', '') }}</td>
-  <td>{{ o.get('date', '') }}</td>
-</tr>
-{% endfor %}
-
+      <tr>
+        <td>{{ o.store }}</td>
+        <td>{{ o.item }}</td>
+        <td>{{ o.quantity }}</td>
+        <td>{{ o.wish_date }}</td>
+        <td>{{ o.date }}</td>
+      </tr>
+      {% endfor %}
     </tbody>
   </table>
-
   <div class="summary">
     총 신청 수량: <strong>{{ total_quantity }}</strong>개
   </div>
