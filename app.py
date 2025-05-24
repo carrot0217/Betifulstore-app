@@ -242,3 +242,40 @@ def admin_dashboard():
         total_quantity=total_quantity,
         top_items=top_items
     )
+
+@app.route('/admin/orders')
+def admin_orders():
+    if session.get('role') != 'admin':
+        return redirect(url_for('login'))
+
+    start_date = request.args.get('start')
+    end_date = request.args.get('end')
+    selected_store = request.args.get('store')
+
+    orders = load_csv(ORDER_FILE)
+    filtered_orders = orders
+
+    if start_date and end_date:
+        try:
+            sdt = datetime.strptime(start_date, "%Y-%m-%d")
+            edt = datetime.strptime(end_date, "%Y-%m-%d")
+            filtered_orders = [
+                o for o in filtered_orders
+                if 'date' in o and o['date'] and sdt <= datetime.strptime(o['date'], "%Y-%m-%d") <= edt
+            ]
+        except:
+            pass
+
+    if selected_store:
+        filtered_orders = [o for o in filtered_orders if o.get('store') == selected_store]
+
+    total_quantity = sum(int(o.get('quantity', 0) or 0) for o in filtered_orders) if filtered_orders else 0
+    store_names = sorted(set(o.get('store') for o in orders if o.get('store')))
+
+    return render_template('admin_orders.html',
+                           orders=filtered_orders,
+                           start_date=start_date or '',
+                           end_date=end_date or '',
+                           selected_store=selected_store or '',
+                           store_names=store_names,
+                           total_quantity=total_quantity)
