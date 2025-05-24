@@ -1,1 +1,51 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>👥 사용자 관리</title>
+  <style>
+    body { font-family: 'Segoe UI', sans-serif; background-color: #fffaf3; padding: 30px; text-align: center; }
+    h1 { color: #5a4031; }
+    table { margin: 20px auto; border-collapse: collapse; width: 80%; }
+    th, td { border: 1px solid #ccc; padding: 10px; }
+    input, select { padding: 5px; margin: 5px; border-radius: 6px; border: 1px solid #ccc; }
+    button { padding: 8px 16px; background-color: #ffcc80; border: none; border-radius: 6px; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <h1>👥 사용자 관리</h1>
 
+  <h3>➕ 새 사용자 등록</h3>
+  <form method="POST">
+    <input type="hidden" name="action" value="add">
+    <input type="text" name="user_id" placeholder="ID" required>
+    <input type="text" name="password" placeholder="비밀번호" required>
+    <select name="role">
+      <option value="user">사용자</option>
+      <option value="admin">관리자</option>
+    </select>
+    <button type="submit">등록</button>
+  </form>
+
+  <h3>📋 등록된 사용자 목록</h3>
+  <table>
+    <tr>
+      <th>ID</th><th>비밀번호</th><th>권한</th><th>삭제</th>
+    </tr>
+    {% for user in users %}
+    <tr>
+      <td>{{ user.user_id }}</td>
+      <td>{{ user.password }}</td>
+      <td>{{ user.role }}</td>
+      <td>
+        <form method="POST" style="display:inline;">
+          <input type="hidden" name="action" value="delete">
+          <input type="hidden" name="user_id" value="{{ user.user_id }}">
+          <button type="submit" onclick="return confirm('정말 삭제하시겠습니까?')">삭제</button>
+        </form>
+      </td>
+    </tr>
+    {% endfor %}
+  </table>
+</body>
+</html>
