@@ -87,7 +87,7 @@ def place_order():
             current_stock = int(item['stock'])
             if current_stock >= quantity:
                 item['stock'] = str(current_stock - quantity)
-                save_csv(ITEM_FILE, items, ['name', 'description', 'stock', 'image'])
+                save_csv(ITEM_FILE, items, ['name', 'description', 'stock', 'image', 'category', 'price', 'manufacturer'])
                 append_csv(ORDER_FILE, {
                     'store': store,
                     'item': item_name,
@@ -197,13 +197,14 @@ def add_item():
     name = request.form.get('name')
     description = request.form.get('description', '')
     stock = request.form.get('stock', '0')
-    category = request.form.get('category', '')
+    category_select = request.form.get('category_select', '')
+    custom_category = request.form.get('category', '')
+    final_category = custom_category if custom_category else category_select
     price = request.form.get('price', '0')
     manufacturer = request.form.get('manufacturer', '')
     image_file = request.files.get('image')
     image_filename = ''
 
-    # 이미지 저장 처리
     if image_file and image_file.filename:
         image_filename = secure_filename(image_file.filename)
         save_path = os.path.join(app.config['UPLOAD_FOLDER'], image_filename)
@@ -215,23 +216,19 @@ def add_item():
             count += 1
         image_file.save(save_path)
 
-    # 기존 항목 불러오고 추가
     items = load_csv(ITEM_FILE)
     items.append({
         'name': name,
         'description': description,
         'stock': stock,
         'image': image_filename,
-        'category': category,
+        'category': final_category,
         'price': price,
         'manufacturer': manufacturer
     })
-
-    # 저장 필드 확장
     save_csv(ITEM_FILE, items, ['name', 'description', 'stock', 'image', 'category', 'price', 'manufacturer'])
 
     return redirect(url_for('manage_items'))
-
 
 @app.route('/admin/users', methods=['GET', 'POST'])
 def manage_users():
