@@ -61,6 +61,10 @@
       color: #4e342e;
       font-weight: bold;
     }
+    td.highlight {
+      color: #d84315;
+      font-weight: bold;
+    }
     tr:hover {
       background-color: #fff3e0;
     }
@@ -76,15 +80,16 @@
       justify-content: center;
     }
   </style>
+
+  {% if request.args.get('success') %}
+  <script>
+    window.onload = function() {
+      alert("✅ 출고일이 확정되었습니다");
+    };
+  </script>
+  {% endif %}
 </head>
 <body>
-
-  {% with messages = get_flashed_messages() %}
-    {% if messages %}
-      <script>alert("{{ messages[0] }}");</script>
-    {% endif %}
-  {% endwith %}
-
   <h1>📋 전체 주문 목록 보기</h1>
 
   <form class="filter-form" method="get" action="/admin/orders">
@@ -112,7 +117,7 @@
         <th>매장</th>
         <th>상품명</th>
         <th>수량</th>
-        <th>희망일</th>
+        <th>입고 희망일</th>
         <th>신청일</th>
         <th>실제 출고일</th>
       </tr>
@@ -123,7 +128,7 @@
         <td>{{ o.store }}</td>
         <td>{{ o.item }}</td>
         <td>{{ o.quantity }}</td>
-        <td>{{ o.wish_date }}</td>
+        <td class="highlight">{{ o.wish_date }}</td>
         <td>{{ o.date }}</td>
         <td>
           <form method="POST" action="/admin/orders/update_delivery" class="inline-form">
@@ -146,6 +151,5 @@
   <div style="margin-top: 30px;">
     <a href="/admin/home" style="display:inline-block; padding:10px 20px; background-color:#ffcc80; color:#4e342e; font-weight:bold; border-radius:8px; text-decoration:none;">🏠 홈으로</a>
   </div>
-
 </body>
 </html>
