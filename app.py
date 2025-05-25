@@ -143,6 +143,45 @@ def admin_orders():
                            store_names=store_names,
                            total_quantity=total_quantity)
 
+@app.route('/admin/orders/download')
+def download_orders_excel():
+    if session.get('role') != 'admin':
+        return redirect(url_for('login'))
+
+    start_date = request.args.get('start')
+    end_date = request.args.get('end')
+    selected_store = request.args.get('store')
+
+    orders = load_csv(ORDER_FILE)
+    filtered_orders = []
+
+    for o in orders:
+        try:
+            if start_date and end_date:
+                order_date = datetime.strptime(o.get('date', ''))
+                if not (datetime.strptime(start_date, "%Y-%m-%d") <= order_date <= datetime.strptime(end_date, "%Y-%m-%d")):
+                    continue
+            if selected_store and o.get('store') != selected_store:
+                continue
+            filtered_orders.append(o)
+        except:
+            continue
+
+    if not filtered_orders:
+        return "❗ 다운로드할 주문 내역이 없습니다.", 400
+
+    df = pd.DataFrame(filtered_orders)
+    output = io.BytesIO()
+    with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
+        df.to_excel(writer, index=False, sheet_name='주문내역')
+    output.seek(0)
+
+    filename = f"주문내역_{datetime.now().strftime('%Y%m%d_%H%M%S')}.xlsx"
+    return send_file(output,
+                     download_name=filename,
+                     as_attachment=True,
+                     mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+
 @app.route('/admin/orders/update_delivery', methods=['POST'])
 def update_delivery():
     if session.get('role') != 'admin':
