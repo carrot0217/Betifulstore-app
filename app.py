@@ -28,6 +28,10 @@ default_users = [
 if not os.path.exists(USER_FILE):
     save_csv(USER_FILE, default_users, ['user_id', 'password', 'role', 'admin_type'])
 
+@app.route('/bgm-player')
+def bgm_player():
+    return render_template('bgm_player.html')
+
 @app.route('/')
 def index():
     if 'user_id' not in session or session.get('role') != 'user':
