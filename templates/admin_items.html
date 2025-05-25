@@ -38,13 +38,16 @@
       box-shadow: 0 4px 10px rgba(0,0,0,0.1);
       display: inline-block;
     }
-    input[type="text"], input[type="number"], input[type="file"] {
+    input[type="text"], input[type="number"], input[type="file"], select {
       padding: 10px;
       margin: 8px;
       border: 1px solid #ccc;
       border-radius: 6px;
       width: 200px;
       background-color: #fff8e1;
+    }
+    #custom_category {
+      display: none;
     }
     button {
       padding: 10px 20px;
@@ -60,6 +63,18 @@
       background-color: #ffb74d;
     }
   </style>
+  <script>
+    function toggleCustomCategory(select) {
+      const customInput = document.getElementById("custom_category");
+      if (select.value === "직접입력") {
+        customInput.style.display = "inline-block";
+        customInput.name = "category";
+      } else {
+        customInput.style.display = "none";
+        customInput.name = "unused";
+      }
+    }
+  </script>
 </head>
 <body>
   <h2>📦 상품 목록</h2>
@@ -74,9 +89,21 @@
     <div><input name="name" type="text" placeholder="상품명" required></div>
     <div><input name="description" type="text" placeholder="설명"></div>
     <div><input name="stock" type="number" placeholder="재고" required></div>
-    <div><input name="category" type="text" placeholder="카테고리"></div>
-    <div><input name="price" type="number" placeholder="단가 (₩)"></div>
-    <div><input name="manufacturer" type="text" placeholder="제작처"></div>
+
+    <div>
+      <select name="category_select" onchange="toggleCustomCategory(this)" required>
+        <option value="">카테고리 선택</option>
+        <option value="잡화">잡화</option>
+        <option value="의류">의류</option>
+        <option value="가전">가전</option>
+        <option value="도서/음반DVD">도서/음반DVD</option>
+        <option value="직접입력">직접입력</option>
+      </select>
+      <input type="text" id="custom_category" placeholder="직접입력 카테고리">
+    </div>
+
+    <div><input name="price" type="number" placeholder="생산단가 (₩)"></div>
+    <div><input name="manufacturer" type="text" placeholder="브랜드"></div>
     <div><input name="image" type="file"></div>
     <button type="submit">➕ 추가</button>
   </form>
@@ -86,4 +113,3 @@
   </div>
 </body>
 </html>
-
