@@ -1,8 +1,7 @@
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-  <meta charset="UTF-8">
-  <title>주문 이력</title>
+{% extends "base_with_bgm.html" %}
+{% block title %}🧾 주문 이력{% endblock %}
+
+{% block content %}
   <style>
     body {
       background-color: #fffaf3;
@@ -50,8 +49,7 @@
       background-color: #ffb74d;
     }
   </style>
-</head>
-<body>
+
   <h2>🧾 나의 주문 이력</h2>
 
   {% if orders %}
@@ -80,5 +78,4 @@
   {% endif %}
 
   <a class="btn" href="/user/home">🏠 홈으로</a>
-</body>
-</html>
+{% endblock %}
