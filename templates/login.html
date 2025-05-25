@@ -2,89 +2,79 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <title>🦍 로그인</title>
+  <title>🔐 로그인</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-
-  <!-- 모던/애플 스타일 대체 폰트 설정 -->
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
-
   <style>
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Noto Sans KR', sans-serif;
+      font-family: 'Segoe UI', sans-serif;
       background-color: #fffaf3;
       color: #4e342e;
       text-align: center;
       padding: 60px;
     }
-
     h2 {
       margin-bottom: 30px;
-      font-size: 2.2em;
-      font-weight: 700;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 12px;
       color: #5a4031;
     }
-
-    .emoji {
-      font-size: 2em;
-      vertical-align: middle;
-    }
-
-    form {
+    .login-box {
+      background-color: white;
+      padding: 30px;
+      border-radius: 18px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
       display: inline-block;
-      background-color: #fff;
-      padding: 30px 40px;
-      border-radius: 16px;
-      box-shadow: 0 6px 14px rgba(0, 0, 0, 0.08);
+      min-width: 280px;
     }
-
     input[type="text"], input[type="password"] {
-      display: block;
-      width: 250px;
-      margin: 12px auto;
-      padding: 12px;
-      border-radius: 8px;
+      width: 90%;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 6px;
       border: 1px solid #ccc;
       background-color: #fff8e1;
-      font-size: 1.05em;
+      font-size: 1em;
     }
-
     button {
-      margin-top: 20px;
-      padding: 10px 28px;
       background-color: #ffcc80;
-      border: none;
-      border-radius: 12px;
-      font-weight: bold;
-      cursor: pointer;
       color: #4e342e;
-      font-size: 1.05em;
+      font-weight: bold;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      margin-top: 10px;
+      cursor: pointer;
     }
-
     button:hover {
       background-color: #ffb74d;
     }
-
-    p {
-      color: red;
-      font-weight: bold;
-      margin-top: 20px;
+    .logo-box {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .logo-box img {
+      height: 48px;
     }
   </style>
 </head>
 <body>
 
-  <h2><span class="emoji">🦍</span> 릴라스테이션</h2>
+  <div class="logo-box">
+    <img src="{{ url_for('static', filename='uploads/rilla.png') }}" alt="로고">
+    <h2>릴라스테이션</h2>
+  </div>
 
-  <form method="post">
-    <input name="user_id" type="text" placeholder="아이디" required>
-    <input name="password" type="password" placeholder="비밀번호" required>
-    <button type="submit">로그인</button>
-  </form>
+  <div class="login-box">
+    <form method="POST">
+      <input type="text" name="user_id" placeholder="아이디" required><br>
+      <input type="password" name="password" placeholder="비밀번호" required><br>
+      <button type="submit">로그인</button>
+    </form>
+    {% if message %}
+    <p style="color: red; margin-top: 10px;">{{ message }}</p>
+    {% endif %}
+  </div>
 
-  <p>{{ message }}</p>
 </body>
 </html>
