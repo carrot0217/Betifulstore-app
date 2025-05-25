@@ -100,8 +100,11 @@
       <button class="zoom-btn" onclick="window.open('{{ url_for('static', filename='uploads/' ~ item.image) }}', '_blank')">🔍</button>
 
       <h3>{{ item.name }}</h3>
-      <p><strong>설명:</strong><br>{{ item.description | replace('\n', '<br>') | safe }}</p>
-      <p><strong>재고:</strong> {{ item.stock }}개</p>
+<p><strong>카테고리:</strong> {{ item.category }}</p>
+<p><strong>단가:</strong> ₩{{ item.price }}</p>
+<p><strong>제작처:</strong> {{ item.manufacturer }}</p>
+<p><strong>설명:</strong><br>{{ item.description | replace('\n', '<br>') | safe }}</p>
+<p><strong>재고:</strong> {{ item.stock }}개</p>
 
       <form method="post" action="/order" target="_blank">
         <label>신청 수량</label><br>
