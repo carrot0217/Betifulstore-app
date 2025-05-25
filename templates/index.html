@@ -123,13 +123,33 @@
 
   <a href="/user/home" class="home-btn">🏠 홈으로</a>
 
-  <!-- 🎵 YouTube 배경음악 자동재생 (음소거 상태) -->
-  <iframe
-    width="0" height="0"
-    src="https://www.youtube.com/embed/QzXUu9vLAoE?autoplay=1&mute=1&loop=1&playlist=QzXUu9vLAoE"
-    frameborder="0"
-    allow="autoplay"
-    allowfullscreen>
-  </iframe>
+  <!-- 🎵 배경음악: 업로드한 PLAYLIST.mp3 -->
+  <audio id="bgm-audio" src="{{ url_for('static', filename='music/PLAYLIST.mp3') }}" autoplay loop></audio>
+
+  <div style="margin-top: 20px;">
+    <button onclick="togglePlay()" id="play-btn">⏸️ 일시정지</button>
+    <button onclick="toggleMute()" id="mute-btn">🔈 음소거</button>
+  </div>
+
+  <script>
+    const bgm = document.getElementById('bgm-audio');
+    const playBtn = document.getElementById('play-btn');
+    const muteBtn = document.getElementById('mute-btn');
+
+    function togglePlay() {
+      if (bgm.paused) {
+        bgm.play();
+        playBtn.innerText = '⏸️ 일시정지';
+      } else {
+        bgm.pause();
+        playBtn.innerText = '▶️ 재생';
+      }
+    }
+
+    function toggleMute() {
+      bgm.muted = !bgm.muted;
+      muteBtn.innerText = bgm.muted ? '🔇 해제' : '🔈 음소거';
+    }
+  </script>
 </body>
 </html>
