@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, session, send_file
+from flask import Flask, render_template, request, redirect, url_for, session, send_file, flash
 from datetime import datetime
 import pandas as pd
 import io, os
@@ -19,14 +19,20 @@ ITEM_FILE = os.path.join(DATA_FOLDER, 'items.csv')
 ORDER_FILE = os.path.join(DATA_FOLDER, 'orders.csv')
 os.makedirs(DATA_FOLDER, exist_ok=True)
 
-default_users = [
-    {'user_id': 'admin', 'password': 'admin123', 'role': 'admin', 'admin_type': '2'},
-    {'user_id': 'gangnam', 'password': '1234', 'role': 'user'},
-    {'user_id': 'seochogu', 'password': 'abcd1234', 'role': 'user'},
-]
-
+# 기본 사용자 계정은 파일이 없을 때만 저장
 if not os.path.exists(USER_FILE):
+    default_users = [
+        {'user_id': 'admin', 'password': 'admin123', 'role': 'admin', 'admin_type': '2'},
+        {'user_id': 'gangnam', 'password': '1234', 'role': 'user'},
+        {'user_id': 'seochogu', 'password': 'abcd1234', 'role': 'user'},
+    ]
     save_csv(USER_FILE, default_users, ['user_id', 'password', 'role', 'admin_type'])
+
+if not os.path.exists(ITEM_FILE):
+    save_csv(ITEM_FILE, [], ['name', 'description', 'stock', 'image', 'category', 'price', 'manufacturer'])
+
+if not os.path.exists(ORDER_FILE):
+    save_csv(ORDER_FILE, [], ['store', 'item', 'quantity', 'wish_date', 'date', 'delivery_date'])
 
 @app.route('/')
 def index():
@@ -143,6 +149,21 @@ def admin_orders():
                            store_names=store_names,
                            total_quantity=total_quantity)
 
+@app.route('/admin/orders/update_delivery', methods=['POST'])
+def update_delivery():
+    if session.get('role') != 'admin':
+        return redirect(url_for('login'))
+
+    order_idx = int(request.form['order_idx'])
+    delivery_date = request.form['delivery_date']
+
+    orders = load_csv(ORDER_FILE)
+    if 0 <= order_idx < len(orders):
+        orders[order_idx]['delivery_date'] = delivery_date
+        save_csv(ORDER_FILE, orders, ['store', 'item', 'quantity', 'wish_date', 'date', 'delivery_date'])
+        flash('출고일이 확정되었습니다')
+    return redirect(url_for('admin_orders'))
+
 @app.route('/admin/orders/download')
 def download_orders_excel():
     if session.get('role') != 'admin':
@@ -158,7 +179,7 @@ def download_orders_excel():
     for o in orders:
         try:
             if start_date and end_date:
-                order_date = datetime.strptime(o.get('date', ''))
+                order_date = datetime.strptime(o.get('date', ''), "%Y-%m-%d")
                 if not (datetime.strptime(start_date, "%Y-%m-%d") <= order_date <= datetime.strptime(end_date, "%Y-%m-%d")):
                     continue
             if selected_store and o.get('store') != selected_store:
@@ -181,20 +202,6 @@ def download_orders_excel():
                      download_name=filename,
                      as_attachment=True,
                      mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-
-@app.route('/admin/orders/update_delivery', methods=['POST'])
-def update_delivery():
-    if session.get('role') != 'admin':
-        return redirect(url_for('login'))
-
-    order_idx = int(request.form['order_idx'])
-    delivery_date = request.form['delivery_date']
-
-    orders = load_csv(ORDER_FILE)
-    if 0 <= order_idx < len(orders):
-        orders[order_idx]['delivery_date'] = delivery_date
-        save_csv(ORDER_FILE, orders, ['store', 'item', 'quantity', 'wish_date', 'date', 'delivery_date'])
-    return redirect(url_for('admin_orders'))
 
 @app.route('/admin/items')
 def manage_items():
