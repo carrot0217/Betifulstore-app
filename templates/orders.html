@@ -60,6 +60,7 @@
         <th>신청 수량</th>
         <th>입고 희망일</th>
         <th>신청일</th>
+        <th>실제 출고일</th>  <!-- 추가된 열 -->
       </tr>
     </thead>
     <tbody>
@@ -69,6 +70,13 @@
         <td>{{ order.quantity }}개</td>
         <td>{{ order.wish_date }}</td>
         <td>{{ order.date }}</td>
+        <td>
+          {% if order.delivery_date %}
+            {{ order.delivery_date }}
+          {% else %}
+            <span style="color: gray;">미정</span>
+          {% endif %}
+        </td>
       </tr>
       {% endfor %}
     </tbody>
