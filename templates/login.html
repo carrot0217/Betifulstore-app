@@ -54,16 +54,16 @@
       margin-bottom: 20px;
     }
     .logo-box img {
-      height: 48px;
+      height: 96px;
     }
   </style>
 </head>
 <body>
 
   <div class="logo-box">
-  <img src="{{ url_for('static', filename='uploads/rilla.png') }}" alt="로고" style="height: 96px;">
- <h2 style="margin: 0; font-size: 2em;">릴라스테이션</h2>
-</div>
+    <img src="{{ url_for('static', filename='uploads/rilla.png') }}" alt="로고" style="height: 96px;">
+    <h2 style="margin: 0; font-size: 2em;">릴라스테이션</h2>
+  </div>
 
   <div class="login-box">
     <form method="POST">
@@ -75,6 +75,15 @@
     <p style="color: red; margin-top: 10px;">{{ message }}</p>
     {% endif %}
   </div>
+
+  <!-- 🎵 YouTube BGM 자동재생 (음소거 + 반복) -->
+  <iframe
+    width="0" height="0"
+    src="https://www.youtube.com/embed/QzXUu9vLAoE?autoplay=1&mute=1&loop=1&playlist=QzXUu9vLAoE"
+    frameborder="0"
+    allow="autoplay"
+    allowfullscreen>
+  </iframe>
 
 </body>
 </html>
