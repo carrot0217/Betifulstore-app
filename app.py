@@ -197,9 +197,13 @@ def add_item():
     name = request.form.get('name')
     description = request.form.get('description', '')
     stock = request.form.get('stock', '0')
+    category = request.form.get('category', '')
+    price = request.form.get('price', '0')
+    manufacturer = request.form.get('manufacturer', '')
     image_file = request.files.get('image')
     image_filename = ''
 
+    # 이미지 저장 처리
     if image_file and image_file.filename:
         image_filename = secure_filename(image_file.filename)
         save_path = os.path.join(app.config['UPLOAD_FOLDER'], image_filename)
@@ -211,16 +215,23 @@ def add_item():
             count += 1
         image_file.save(save_path)
 
+    # 기존 항목 불러오고 추가
     items = load_csv(ITEM_FILE)
     items.append({
         'name': name,
         'description': description,
         'stock': stock,
-        'image': image_filename
+        'image': image_filename,
+        'category': category,
+        'price': price,
+        'manufacturer': manufacturer
     })
-    save_csv(ITEM_FILE, items, ['name', 'description', 'stock', 'image'])
+
+    # 저장 필드 확장
+    save_csv(ITEM_FILE, items, ['name', 'description', 'stock', 'image', 'category', 'price', 'manufacturer'])
 
     return redirect(url_for('manage_items'))
+
 
 @app.route('/admin/users', methods=['GET', 'POST'])
 def manage_users():
