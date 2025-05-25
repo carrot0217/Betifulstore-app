@@ -1,1 +1,16 @@
+<!-- templates/bgm_player.html -->
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>🎵 BGM</title>
+</head>
+<body style="margin:0; background:transparent;">
+  <audio id="bgm" src="{{ url_for('static', filename='music/PLAYLIST.mp3') }}" autoplay loop></audio>
 
+  <script>
+    const bgm = document.getElementById('bgm');
+    bgm.volume = 0.4;  // 음량 (0.0 ~ 1.0)
+  </script>
+</body>
+</html>
