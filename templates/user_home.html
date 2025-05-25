@@ -1,9 +1,7 @@
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-  <meta charset="UTF-8">
-  <title>👤 사용자 홈</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+{% extends "base_with_bgm.html" %}
+{% block title %}👤 사용자 홈{% endblock %}
+
+{% block content %}
   <style>
     body {
       font-family: 'Segoe UI', sans-serif;
@@ -37,13 +35,11 @@
       background-color: #ffb74d;
     }
   </style>
-</head>
-<body>
+
   <h2>👤 사용자 홈</h2>
   <div class="btn-group">
     <a href="/">📦 상품 신청</a>
     <a href="/orders">🧾 주문 이력</a>
     <a href="/logout">🚪 로그아웃</a>
   </div>
-</body>
-</html>
+{% endblock %}
