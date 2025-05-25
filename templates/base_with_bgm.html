@@ -1,1 +1,27 @@
+<!-- templates/base_with_bgm.html -->
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>{% block title %}사용자 페이지{% endblock %}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    iframe#bgm-frame {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 0;
+      height: 0;
+      border: none;
+      z-index: -1;
+    }
+  </style>
+</head>
+<body>
+  <!-- 🎵 고정 iframe으로 배경음악 실행 -->
+  <iframe id="bgm-frame" src="{{ url_for('bgm_player') }}"></iframe>
 
+  <!-- 🔽 개별 페이지 내용 삽입 영역 -->
+  {% block content %}{% endblock %}
+</body>
+</html>
