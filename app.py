@@ -234,18 +234,31 @@ def add_item():
 def manage_users():
     if session.get('role') != 'admin':
         return redirect(url_for('login'))
+
     users = load_csv(USER_FILE)
+
     if request.method == 'POST':
         action = request.form.get('action')
         user_id = request.form.get('user_id')
         password = request.form.get('password')
         role = request.form.get('role')
+
         if action == 'add':
-            users.append({'user_id': user_id, 'password': password, 'role': role})
+            new_user = {
+                'user_id': user_id,
+                'password': password,
+                'role': role,
+                'admin_type': '1'  # 필수 필드 추가
+            }
+            users.append(new_user)
+
         elif action == 'delete':
             users = [u for u in users if u['user_id'] != user_id]
-        save_csv(USER_FILE, users, ['user_id', 'password', 'role'])
+
+        # 모든 사용자 저장 시 admin_type 포함
+        save_csv(USER_FILE, users, ['user_id', 'password', 'role', 'admin_type'])
         return redirect(url_for('manage_users'))
+
     return render_template('manage_users.html', users=users)
 
 @app.route('/admin/dashboard')
