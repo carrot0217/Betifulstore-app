@@ -1,9 +1,7 @@
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-  <meta charset="UTF-8">
-  <title>🛒 상품 신청</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+{% extends "base_with_bgm.html" %}
+{% block title %}🛒 상품 신청{% endblock %}
+
+{% block content %}
   <style>
     body {
       background-color: #fffaf3;
@@ -88,8 +86,7 @@
       background-color: #ffb74d;
     }
   </style>
-</head>
-<body>
+
   <h1>🛒 상품 신청</h1>
 
   <div class="card-container">
@@ -122,34 +119,4 @@
   </div>
 
   <a href="/user/home" class="home-btn">🏠 홈으로</a>
-
-  <!-- 🎵 배경음악: 업로드한 PLAYLIST.mp3 -->
-  <audio id="bgm-audio" src="{{ url_for('static', filename='music/PLAYLIST.mp3') }}" autoplay loop></audio>
-
-  <div style="margin-top: 20px;">
-    <button onclick="togglePlay()" id="play-btn">⏸️ 일시정지</button>
-    <button onclick="toggleMute()" id="mute-btn">🔈 음소거</button>
-  </div>
-
-  <script>
-    const bgm = document.getElementById('bgm-audio');
-    const playBtn = document.getElementById('play-btn');
-    const muteBtn = document.getElementById('mute-btn');
-
-    function togglePlay() {
-      if (bgm.paused) {
-        bgm.play();
-        playBtn.innerText = '⏸️ 일시정지';
-      } else {
-        bgm.pause();
-        playBtn.innerText = '▶️ 재생';
-      }
-    }
-
-    function toggleMute() {
-      bgm.muted = !bgm.muted;
-      muteBtn.innerText = bgm.muted ? '🔇 해제' : '🔈 음소거';
-    }
-  </script>
-</body>
-</html>
+{% endblock %}
