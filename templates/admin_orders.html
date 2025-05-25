@@ -69,38 +69,11 @@
       font-weight: bold;
       color: #4e342e;
     }
-    .preview-img-icon {
-      position: absolute;
-      top: 8px;
-      right: 8px;
-      background-color: rgba(255, 255, 255, 0.9);
-      border-radius: 50%;
-      padding: 6px;
-      cursor: pointer;
-    }
-    .preview-popup {
-      display: none;
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      z-index: 1000;
-      background: white;
-      border: 2px solid #ffcc80;
-      padding: 20px;
-      border-radius: 12px;
-    }
-    .preview-popup img {
-      max-width: 100%;
-      height: auto;
-    }
-    .preview-popup-close {
-      margin-top: 10px;
-      background-color: #ffcc80;
-      padding: 6px 12px;
-      border-radius: 6px;
-      border: none;
-      cursor: pointer;
+    form.inline-form {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      justify-content: center;
     }
   </style>
 </head>
@@ -134,6 +107,7 @@
         <th>수량</th>
         <th>희망일</th>
         <th>신청일</th>
+        <th>실제 출고일</th>
       </tr>
     </thead>
     <tbody>
@@ -144,6 +118,13 @@
         <td>{{ o.quantity }}</td>
         <td>{{ o.wish_date }}</td>
         <td>{{ o.date }}</td>
+        <td>
+          <form method="POST" action="/admin/orders/update_delivery" class="inline-form">
+            <input type="hidden" name="order_idx" value="{{ loop.index0 }}">
+            <input type="date" name="delivery_date" value="{{ o.delivery_date }}">
+            <button type="submit">💾</button>
+          </form>
+        </td>
       </tr>
       {% endfor %}
     </tbody>
@@ -154,9 +135,10 @@
   {% else %}
   <p>📭 주문 이력이 없습니다.</p>
   {% endif %}
+
   <div style="margin-top: 30px;">
-  <a href="/admin/home" style="display:inline-block; padding:10px 20px; background-color:#ffcc80; color:#4e342e; font-weight:bold; border-radius:8px; text-decoration:none;">🏠 홈으로</a>
-</div>
+    <a href="/admin/home" style="display:inline-block; padding:10px 20px; background-color:#ffcc80; color:#4e342e; font-weight:bold; border-radius:8px; text-decoration:none;">🏠 홈으로</a>
+  </div>
 
 </body>
 </html>
