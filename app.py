@@ -48,16 +48,37 @@ def login():
     if request.method == 'POST':
         user_id = request.form['user_id']
         password = request.form['password']
-        users = load_csv(USER_FILE)
-        for user in users:
-            if user['user_id'] == user_id and user['password'] == password:
-                session['user_id'] = user_id
-                session['role'] = user['role']
-                if user['role'] == 'admin':
-                    session['admin_type'] = user.get('admin_type', '1')
-                return redirect(url_for('admin_home' if user['role'] == 'admin' else 'user_home'))
-        message = '❌ 로그인 실패: ID 또는 비밀번호 확인'
+
+        # PostgreSQL 연결
+        conn = psycopg2.connect(
+            host="dpg-d0pihfje5dus73ds74gg-a.singapore-postgres.render.com",
+            port="5432",
+            database="beautifulstore",
+            user="carrot0217",
+            password="oxfvqRLiEN9thqDC1VuRZ9o4xHeKqLPK"
+        )
+        cur = conn.cursor()
+
+        # 사용자 조회
+        cur.execute(
+            "SELECT username, password, is_admin FROM users WHERE username = %s",
+            (user_id,)
+        )
+        result = cur.fetchone()
+
+        cur.close()
+        conn.close()
+
+        # 인증 성공 시
+        if result and result[1] == password:
+            session['user_id'] = result[0]
+            session['role'] = 'admin' if result[2] else 'user'
+            return redirect(url_for('admin_home' if result[2] else 'user_home'))
+        else:
+            message = '❌ 로그인 실패: ID 또는 비밀번호 확인'
+
     return render_template('login.html', message=message)
+
 
 @app.route('/logout')
 def logout():
