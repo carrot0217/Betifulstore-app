@@ -1,4 +1,5 @@
 import psycopg2
+from db import fetch_all, fetch_one, execute_query
 from flask import Flask, render_template, request, redirect, url_for, session, send_file, flash
 from datetime import datetime
 import pandas as pd
@@ -229,8 +230,9 @@ def download_orders_excel():
 def manage_items():
     if session.get('role') != 'admin':
         return redirect(url_for('login'))
-    items = load_csv(ITEM_FILE)
+    items = fetch_all("SELECT * FROM inventory ORDER BY id DESC")
     return render_template('admin_items.html', items=items)
+
 
 @app.route('/admin/items/add', methods=['POST'])
 def add_item():
@@ -239,25 +241,35 @@ def add_item():
 
     name = request.form.get('name')
     description = request.form.get('description', '')
-    stock = request.form.get('stock', '0')
+    stock = int(request.form.get('stock', '0'))
     category_select = request.form.get('category_select', '')
     custom_category = request.form.get('category', '')
     final_category = custom_category if custom_category else category_select
-    price = request.form.get('price', '0')
+    price = int(request.form.get('price', '0'))
     manufacturer = request.form.get('manufacturer', '')
     image_file = request.files.get('image')
     image_filename = ''
 
     if image_file and image_file.filename:
         image_filename = secure_filename(image_file.filename)
-        save_path = os.path.join(app.config['UPLOAD_FOLDER'], image_filename)
+        upload_folder = 'static/uploads'
+        os.makedirs(upload_folder, exist_ok=True)
+        save_path = os.path.join(upload_folder, image_filename)
         base, ext = os.path.splitext(image_filename)
         count = 1
         while os.path.exists(save_path):
             image_filename = f"{base}_{count}{ext}"
-            save_path = os.path.join(app.config['UPLOAD_FOLDER'], image_filename)
+            save_path = os.path.join(upload_folder, image_filename)
             count += 1
         image_file.save(save_path)
+
+    execute_query("""
+        INSERT INTO inventory (name, description, stock, image, category, price, manufacturer)
+        VALUES (%s, %s, %s, %s, %s, %s, %s)
+    """, (name, description, stock, image_filename, final_category, price, manufacturer))
+
+    return redirect(url_for('manage_items'))
+
 
     items = load_csv(ITEM_FILE)
     items.append({
