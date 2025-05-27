@@ -104,4 +104,4 @@ def manage_items():
     return render_template('admin_items.html', items=items)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=10000, debug=True)
