@@ -2,114 +2,53 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <title>상품 관리</title>
+  <title>🛠️ 상품 관리</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
     body {
-      font-family: 'Segoe UI', sans-serif;
       background-color: #fffaf3;
-      color: #4e342e;
-      text-align: center;
+      font-family: 'Segoe UI', sans-serif;
       padding: 40px;
     }
-    h2 {
-      color: #5a4031;
-      margin-bottom: 30px;
+    table {
+      width: 100%;
+      border-collapse: collapse;
     }
-    ul {
-      list-style: none;
-      padding: 0;
-      margin-bottom: 30px;
-    }
-    li {
-      background-color: #fff;
-      border: 1px solid #ffe0b2;
-      margin: 10px auto;
-      padding: 10px 20px;
-      border-radius: 8px;
-      width: 80%;
-      max-width: 400px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    th, td {
+      padding: 10px;
+      border: 1px solid #ccc;
+      text-align: center;
     }
     form {
-      background-color: #fff;
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-      display: inline-block;
-    }
-    input[type="text"], input[type="number"], input[type="file"], select {
-      padding: 10px;
-      margin: 8px;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      width: 200px;
-      background-color: #fff8e1;
-    }
-    #custom_category {
-      display: none;
-    }
-    button {
-      padding: 10px 20px;
-      background-color: #ffcc80;
-      border: none;
-      border-radius: 8px;
-      font-weight: bold;
-      color: #4e342e;
-      cursor: pointer;
-      margin-top: 10px;
-    }
-    button:hover {
-      background-color: #ffb74d;
+      margin-top: 20px;
     }
   </style>
-  <script>
-    function toggleCustomCategory(select) {
-      const customInput = document.getElementById("custom_category");
-      if (select.value === "직접입력") {
-        customInput.style.display = "inline-block";
-        customInput.name = "category";
-      } else {
-        customInput.style.display = "none";
-        customInput.name = "unused";
-      }
-    }
-  </script>
 </head>
 <body>
-  <h2>📦 상품 목록</h2>
-
-  <ul>
-    {% for item in items %}
-      <li>{{ item.name }} (재고: {{ item.stock }})</li>
-    {% endfor %}
-  </ul>
-
-  <form method="post" action="/admin/items/add" enctype="multipart/form-data">
-    <div><input name="name" type="text" placeholder="상품명" required></div>
-    <div><input name="description" type="text" placeholder="설명"></div>
-    <div><input name="stock" type="number" placeholder="재고" required></div>
-
-    <div>
-      <select name="category_select" onchange="toggleCustomCategory(this)" required>
-        <option value="">카테고리 선택</option>
-        <option value="잡화">잡화</option>
-        <option value="의류">의류</option>
-        <option value="가전">가전</option>
-        <option value="도서/음반DVD">도서/음반DVD</option>
-        <option value="직접입력">직접입력</option>
-      </select>
-      <input type="text" id="custom_category" placeholder="직접입력 카테고리">
-    </div>
-
-    <div><input name="price" type="number" placeholder="생산단가 (₩)"></div>
-    <div><input name="manufacturer" type="text" placeholder="브랜드"></div>
-    <div><input name="image" type="file"></div>
-    <button type="submit">➕ 추가</button>
+  <h1>🔧 관리자 상품 등록</h1>
+  <a href="{{ url_for('dashboard') }}">🏠 대시보드로 돌아가기</a>
+  <form method="POST">
+    <input type="text" name="name" placeholder="상품명" required>
+    <input type="text" name="description" placeholder="설명" required>
+    <input type="number" name="quantity" placeholder="수량" required>
+    <button type="submit">등록</button>
   </form>
 
-  <div style="margin-top: 30px;">
-    <a href="/admin/home" style="display:inline-block; padding:10px 20px; background-color:#ffcc80; color:#4e342e; font-weight:bold; border-radius:8px; text-decoration:none;">🏠 홈으로</a>
-  </div>
+  <h2>📋 현재 상품 목록</h2>
+  <table>
+    <tr><th>상품명</th><th>설명</th><th>수량</th></tr>
+    {% for item in items %}
+    <tr>
+      <td>{{ item[1] }}</td>
+      <td>{{ item[2] }}</td>
+      <td>{{ item[3] }}</td>
+    </tr>
+    {% endfor %}
+  </table>
+  {% with messages = get_flashed_messages() %}
+    {% if messages %}
+      <p style="color: green;">{{ messages[0] }}</p>
+    {% endif %}
+  {% endwith %}
 </body>
 </html>
