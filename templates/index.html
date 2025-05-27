@@ -1,140 +1,54 @@
-{% extends "base.html" %}
-{% block title %}🛒 상품 신청{% endblock %}
-
-{% block content %}
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>📦 대시보드</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
     body {
       background-color: #fffaf3;
-      font-family: 'Segoe UI', 'Noto Sans KR', sans-serif;
-      text-align: center;
+      font-family: 'Segoe UI', sans-serif;
       padding: 40px;
-      color: #4e342e;
     }
-
-    h1 {
-      font-size: 1.8em;
-      margin-bottom: 40px;
-    }
-
-    .card-container {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 30px;
-    }
-
-    .card {
-      background-color: #ffefcc;
-      border-radius: 16px;
-      padding: 20px;
-      width: 260px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-      position: relative;
-    }
-
-    .card img {
+    table {
       width: 100%;
-      border-radius: 8px;
+      border-collapse: collapse;
     }
-
-    .zoom-btn {
-      position: absolute;
-      top: 12px;
-      right: 12px;
-      background-color: #fff8e1;
-      border: none;
-      font-size: 1.1em;
-      cursor: pointer;
-      border-radius: 50%;
-      width: 28px;
-      height: 28px;
+    th, td {
+      padding: 12px;
+      border: 1px solid #ddd;
+      text-align: center;
     }
-
-    .card h3 {
-      margin: 15px 0 10px;
-    }
-
-    .left-info {
-      text-align: left;
-      font-size: 0.92em;
-      line-height: 1.4em;
-    }
-
-    .stock-text {
-      color: #d84315;
-      font-weight: bold;
-    }
-
-    input[type="number"], input[type="date"] {
-      width: 90%;
-      padding: 6px;
-      margin: 6px 0;
-      border-radius: 6px;
-      border: 1px solid #ccc;
-      font-family: inherit;
-    }
-
-    button.submit-btn {
-      background-color: #ffcc80;
-      color: #4e342e;
-      font-weight: bold;
-      padding: 8px 16px;
-      border: none;
-      border-radius: 8px;
-      margin-top: 8px;
-      cursor: pointer;
-    }
-
-    button.submit-btn:hover {
-      background-color: #ffb74d;
-    }
-
-    .home-btn {
-      display: inline-block;
-      margin-top: 40px;
-      padding: 10px 24px;
-      background-color: #ffcc80;
-      color: #4e342e;
-      font-weight: bold;
-      text-decoration: none;
-      border-radius: 10px;
-    }
-
-    .home-btn:hover {
-      background-color: #ffb74d;
+    form {
+      display: inline;
     }
   </style>
-
-  <h1>🛒 상품 신청</h1>
-
-  <div class="card-container">
+</head>
+<body>
+  <h1>환영합니다, {{ username }}님!</h1>
+  <a href="{{ url_for('logout') }}">🔓 로그아웃</a>
+  <h2>📋 상품 목록</h2>
+  <table>
+    <tr><th>상품명</th><th>설명</th><th>수량</th><th>주문</th></tr>
     {% for item in items %}
-    <div class="card">
-      <img src="{{ url_for('static', filename='uploads/' ~ item.image) }}" alt="{{ item.name }}">
-      <button class="zoom-btn" onclick="window.open('{{ url_for('static', filename='uploads/' ~ item.image) }}', '_blank')">🔍</button>
-
-      <h3>{{ item.name }}</h3>
-
-      <div class="left-info">
-        <p><strong>카테고리:</strong> {{ item.category }}</p>
-        <p><strong>생산단가:</strong> ₩{{ item.price }}</p>
-        <p><strong>브랜드:</strong> {{ item.manufacturer }}</p>
-        <p><strong>설명:</strong><br>{{ item.description | replace('\n', '<br>') | safe }}</p>
-      </div>
-
-      <p class="stock-text">재고: {{ item.stock }}개</p>
-
-      <form method="post" action="/order" target="_blank">
-        <label>신청 수량</label><br>
-        <input type="number" name="quantity" required><br>
-        <label>입고 희망일</label><br>
-        <input type="date" name="wish_date" required><br>
-        <input type="hidden" name="item_name" value="{{ item.name }}">
-        <button class="submit-btn" type="submit">신청</button>
-      </form>
-    </div>
+    <tr>
+      <td>{{ item[1] }}</td>
+      <td>{{ item[2] }}</td>
+      <td>{{ item[3] }}</td>
+      <td>
+        <form method="POST" action="{{ url_for('place_order') }}">
+          <input type="hidden" name="item_id" value="{{ item[0] }}">
+          <input type="number" name="quantity" min="1" required>
+          <button type="submit">주문</button>
+        </form>
+      </td>
+    </tr>
     {% endfor %}
-  </div>
-
-  <a href="/user/home" class="home-btn">🏠 홈으로</a>
-{% endblock %}
+  </table>
+  {% with messages = get_flashed_messages() %}
+    {% if messages %}
+      <p style="color: green;">{{ messages[0] }}</p>
+    {% endif %}
+  {% endwith %}
+</body>
+</html>
