@@ -1,4 +1,0 @@
-flask
-pandas
-xlsxwriter
-psycopg2-binary
