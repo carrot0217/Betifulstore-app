@@ -1,5 +1,5 @@
 # db.py
-import psycopg2
+import psycopg
 
 def get_connection():
     conn = psycopg2.connect(
