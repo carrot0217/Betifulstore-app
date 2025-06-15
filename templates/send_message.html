@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>📩 새 쪽지 보내기</title>
+  <style>
+    body { background: #fffaf3; font-family: 'Segoe UI', sans-serif; padding: 40px; }
+    label, input, textarea, button { display: block; margin-bottom: 16px; width: 100%; max-width: 400px; }
+    textarea { height: 120px; }
+  </style>
+</head>
+<body>
+  <h1>📩 새 쪽지 보내기</h1>
+  <form method="POST">
+    <label>받는 사람 ID</label>
+    <input type="text" name="recipient" required>
+
+    <label>쪽지 내용</label>
+    <textarea name="content" required></textarea>
+
+    <button type="submit">보내기</button>
+  </form>
+</body>
+</html>

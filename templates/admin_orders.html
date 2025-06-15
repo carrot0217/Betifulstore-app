@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>📋 전체 주문 목록</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #fffaf3;
+      text-align: center;
+      padding: 30px;
+    }
+    h1 {
+      color: #5a4031;
+      margin-bottom: 20px;
+    }
+    .filter-form {
+      margin-bottom: 24px;
+      font-size: 1em;
+    }
+    .filter-form input[type="date"],
+    .filter-form input[type="text"],
+    .filter-form select {
+      padding: 6px 10px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      background: #ffe0b2;
+      margin: 0 5px;
+    }
+    table {
+      margin: auto;
+      border-collapse: collapse;
+      width: 95%;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 10px;
+      vertical-align: top;
+    }
+    th {
+      background-color: #ffcc80;
+    }
+    .btn {
+      background-color: #aed581;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      margin: 2px;
+    }
+    .btn-download {
+      background-color: #ffcc80;
+      color: #4e342e;
+      border: none;
+      border-radius: 8px;
+      padding: 9px 20px;
+      font-weight: bold;
+      margin-left: 8px;
+      cursor: pointer;
+      transition: background 0.18s;
+    }
+    .btn-download:hover {
+      background-color: #ffc04d;
+    }
+    .status-cancelled {
+      color: #d32f2f;
+      font-weight: bold;
+    }
+    .status-deleted {
+      color: red;
+      font-weight: bold;
+    }
+    small {
+      font-size: 0.85em;
+      color: #444;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ✅ 이전 화면 버튼 -->
+  <div style="margin-bottom: 18px; text-align: left;">
+    <a href="{{ url_for('dashboard') }}" style="
+        background-color: #ffd180;
+        color: #4e342e;
+        text-decoration: none;
+        padding: 10px 18px;
+        border-radius: 12px;
+        font-weight: bold;
+        box-shadow: 0 2px 6px #ffecb3;
+        display: inline-block;
+    ">⬅️ 이전 화면</a>
+  </div>
+
+  <h1>📋 전체 주문 목록</h1>
+
+  <form class="filter-form" method="get" action="">
+    <select name="status">
+      {% for s in status_choices %}
+        <option value="{{s}}" {% if s == status %}selected{% endif %}>{{s}}</option>
+      {% endfor %}
+    </select>
+    <input type="date" name="start_date" value="{{start_date}}">
+    <input type="date" name="end_date" value="{{end_date}}">
+    <input type="text" name="keyword" value="{{keyword}}" placeholder="매장/품목명 검색">
+    <button type="submit">🔎 필터 적용</button>
+  </form>
+
+  <table>
+    <thead>
+      <tr>
+        <th>주문일</th>
+        <th>매장</th>
+        <th>품목</th>
+        <th>수량</th>
+        <th>상태</th>
+        <th>배송일</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for order in orders %}
+        <tr>
+          <td>{{ order[1] }}</td> <!-- 주문일 -->
+          <td>{{ order[2] }}</td> <!-- 매장 -->
+          <td>{{ order[3] }}</td> <!-- 품목 -->
+          <td>{{ order[4] }}</td> <!-- 수량 -->
+          <td>
+            {% if order[5] == '삭제됨' %}
+              <span class="status-deleted">삭제됨</span><br>
+              {% if order[8] %}
+                <small>{{ order[8] }}</small><br>
+              {% endif %}
+              <form method="post" action="{{ url_for('admin_delete_order', order_id=order[0]) }}" style="margin-top: 6px;">
+                <button type="submit" class="btn btn-download" onclick="return confirm('정말 삭제하시겠습니까?')">삭제</button>
+              </form>
+            {% elif order[5].startswith('취소됨') %}
+              <span class="status-cancelled">{{ order[5] }}</span><br>
+              {% if order[8] %}
+                <small>{{ order[8] }}</small>
+              {% endif %}
+            {% else %}
+              {{ order[5] }}
+            {% endif %}
+          </td>
+          <td>
+            {% if order[5] == '대기 중' %}
+              <form method="POST" action="{{ url_for('set_delivery', order_id=order[0]) }}">
+                <input type="date" name="delivery_date" value="{{ order[6] if order[6] else '' }}">
+                <button class="btn" type="submit">📦 배송일 입력</button>
+              </form>
+            {% else %}
+              {{ order[6] }}
+            {% endif %}
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+</body>
+</html>
+
