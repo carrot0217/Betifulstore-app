@@ -2,12 +2,11 @@
 import psycopg
 
 def get_connection():
-    conn = psycopg2.connect(
+    conn = psycopg.connect(
         host="dpg-d0pihfje5dus73ds74gg-a.singapore-postgres.render.com",
-        port="5432",
-        database="beautifulstore",
+        port=5432,
+        dbname="beautifulstore",
         user="carrot0217",
         password="oxfvqRLiEN9thqDC1VuRZ9o4xHeKqLPK"
     )
-    conn.autocommit = True   # ★ 이 한 줄 추가!!
     return conn
